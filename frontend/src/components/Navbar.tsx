@@ -4,16 +4,19 @@ import { useState } from "react";
 
 export default function Navbar() {
   // Giả lập trạng thái đăng nhập, bạn thay bằng logic thực tế
-  const [isLoggedIn] = useState(true);
+  const [isLoggedIn] = useState(false);
 
   return (
     <header className="bg-indigo-500 text-white px-6 py-3 flex items-center">
       {/* Logo */}
-      <img
-        src="/images/devshare-lite-logo-white.png"
-        alt="DevShare Lite Logo"
-        className="w-15 h-10 rectangle"
-      />
+      <Link href="/">
+        <img
+          src="/images/devshare-lite-logo-white.png"
+          alt="DevShare Lite Logo"
+          className="w-15 h-10 rectangle"
+        />
+      </Link>
+
       {/* Title */}
       <h1 className="text-2xl font-bold ml-4">DevShare Lite</h1>
       {/* Search center */}
@@ -33,7 +36,7 @@ export default function Navbar() {
       <div className="flex gap-10 items-center ml-4">
         {isLoggedIn ? (
           <>
-            <Link href="#" aria-label="Add Post">
+            <Link href="/create-post" aria-label="Add Post">
               <FiPlusSquare size={28} className="hover:text-indigo-200" />
             </Link>
             <Link href="#" aria-label="Notifications">

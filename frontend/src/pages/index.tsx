@@ -1,4 +1,3 @@
-// src/pages/home.tsx
 import Head from "next/head";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";

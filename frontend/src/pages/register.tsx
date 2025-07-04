@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Link from "next/link";
+import "@/styles/globals.css"; // Ensure global styles are imported
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);

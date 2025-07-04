@@ -9,10 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@uiw/react-markdown-preview": "^5.1.4",
+    "@uiw/react-md-editor": "^4.0.7",
     "next": "15.3.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-icons": "^5.5.0"
+    "react-icons": "^5.5.0",
+    "react-markdown": "^10.1.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
