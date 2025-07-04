@@ -1,15 +1,41 @@
 import Link from "next/link";
 import { FiPlusSquare, FiBell, FiSearch } from "react-icons/fi";
-import { useState, useEffect} from "react";
+import { useState, useEffect, useRef} from "react";
 import Cookies from "js-cookie";
 
 export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] =  useState<{ username: string; email: string; avatar?: string} | null>(null);
+  const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const token = Cookies.get("access_token");
+    const storedUser = Cookies.get("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
     setIsLoggedIn(!!token);
   }, []);
+
+  // Ẩn menu khi click ra ngoài
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setShowMenu(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = () => {
+    Cookies.remove("access_token");
+    Cookies.remove("user");
+    setIsLoggedIn(false);
+    setUser(null);
+    window.location.href = "/";
+  };
 
   return (
     <header className="bg-indigo-500 text-white px-6 py-3 flex items-center">
@@ -47,11 +73,31 @@ export default function Navbar() {
             <Link href="#" aria-label="Notifications">
               <FiBell size={28} className="hover:text-indigo-200" />
             </Link>
-            <img
-              src="/user.png"
-              alt="user avatar"
-              className="w-8 h-8 rounded-full"
-            />
+            {/* Avatar */}
+            <div className="relative" ref={menuRef}>
+              <img
+                src={user?.avatar || "/user.png"}
+                alt="user avatar"
+                className="w-8 h-8 rounded-full cursor-pointer border border-white"
+                onClick={() => setShowMenu((prev) => !prev)}
+              />
+              {showMenu && (
+                <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded shadow z-10">
+                  <Link
+                    href="/update-profile"
+                    className="block px-4 py-2 hover:bg-indigo-100 text-sm"
+                  >
+                    Update Profile
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 hover:bg-red-100 text-sm text-red-600"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           </>
         ) : (
           <>
