@@ -1,24 +1,66 @@
 import Link from "next/link";
+import { FiPlusSquare, FiBell, FiSearch } from "react-icons/fi";
+import { useState } from "react";
 
 export default function Navbar() {
+  // Giả lập trạng thái đăng nhập, bạn thay bằng logic thực tế
+  const [isLoggedIn] = useState(true);
+
   return (
-    <header className="bg-indigo-500 text-white px-6 py-3 flex justify-between items-center">
-      <div className="flex items-center gap-2">
-        <span className="text-lg font-bold">💻 DevShare Lite</span>
-        <input
-          type="text"
-          placeholder="Search DevShare Lite"
-          className="ml-4 px-2 py-1 rounded text-black"
-        />
+    <header className="bg-indigo-500 text-white px-6 py-3 flex items-center">
+      {/* Logo */}
+      <img
+        src="/images/devshare-lite-logo-white.png"
+        alt="DevShare Lite Logo"
+        className="w-15 h-10 rectangle"
+      />
+      {/* Title */}
+      <h1 className="text-2xl font-bold ml-4">DevShare Lite</h1>
+      {/* Search center */}
+      <div className="flex-1 flex justify-center">
+        <div className="relative w-full max-w-xl">
+          <input
+            type="text"
+            placeholder="Search DevShare Lite"
+            className="w-full pl-4 pr-10 py-2 rounded-full text-black"
+          />
+          <button className="absolute right-2 top-1/2 -translate-y-1/2 text-black hover:text-indigo-600">
+            <FiSearch size={22} />
+          </button>
+        </div>
       </div>
-      <div className="flex gap-4 items-center">
-        <Link href="#">➕</Link>
-        <Link href="#">🔔</Link>
-        <img
-          src="/user.png"
-          alt="user avatar"
-          className="w-8 h-8 rounded-full"
-        />
+      {/* Action */}
+      <div className="flex gap-10 items-center ml-4">
+        {isLoggedIn ? (
+          <>
+            <Link href="#" aria-label="Add Post">
+              <FiPlusSquare size={28} className="hover:text-indigo-200" />
+            </Link>
+            <Link href="#" aria-label="Notifications">
+              <FiBell size={28} className="hover:text-indigo-200" />
+            </Link>
+            <img
+              src="/user.png"
+              alt="user avatar"
+              className="w-8 h-8 rounded-full"
+            />
+          </>
+        ) : (
+          <>
+            <Link
+              href="/login"
+              className="px-4 py-1 rounded-full bg-white text-indigo-600 font-semibold hover:bg-indigo-100"
+            >
+              Login
+            </Link>
+            <Link
+              href="/register"
+              className="px-4 py-1 rounded-full bg-white text-indigo-600 font-semibold hover:bg-indigo-100"
+            >
+              Register
+            </Link>
+          </>
+        )}
       </div>
     </header>
   );
