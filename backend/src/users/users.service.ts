@@ -15,4 +15,17 @@ export class UsersService {
   async findAll(): Promise<User[]> {
     return this.userModel.find().exec();
   }
+  async findById(id: string): Promise<User | null> {
+    return this.userModel.findById(id).exec();
+  }
+
+  async findByUsername(username: string): Promise<User | null> {
+    return this.userModel.findOne({
+      username: username.toLowerCase(),
+    }).exec();
+  }
+
+  async update(id: string, data: Partial<User>): Promise<User | null> {
+    return this.userModel.findByIdAndUpdate(id, data, { new: true }).exec();
+  }
 }
