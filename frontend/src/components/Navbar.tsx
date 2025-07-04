@@ -1,10 +1,15 @@
 import Link from "next/link";
 import { FiPlusSquare, FiBell, FiSearch } from "react-icons/fi";
-import { useState } from "react";
+import { useState, useEffect} from "react";
+import Cookies from "js-cookie";
 
 export default function Navbar() {
-  // Giả lập trạng thái đăng nhập, bạn thay bằng logic thực tế
-  const [isLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = Cookies.get("access_token");
+    setIsLoggedIn(!!token);
+  }, []);
 
   return (
     <header className="bg-indigo-500 text-white px-6 py-3 flex items-center">

@@ -19,3 +19,13 @@ export class User {
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+// Chuyển _id thành id khi trả dữ liệu về
+UserSchema.set('toJSON', {
+  virtuals: true,
+  versionKey: false,
+  transform: (_, ret) => {
+    ret.id = ret._id;
+    delete ret._id;
+  },
+});
