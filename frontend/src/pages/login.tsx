@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import API from "../utils/api"; // Adjust the import path as necessary
+import API from "../utils/api"; 
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import "@/styles/globals.css"; 

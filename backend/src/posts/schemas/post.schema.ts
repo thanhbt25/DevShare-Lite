@@ -17,6 +17,18 @@ export class Post {
 
   @Prop({ type: [Types.ObjectId], ref: 'User', default: [] })
   favoritedBy: Types.ObjectId[];
+
+  @Prop({ type: [String], default: [] })
+  tags: string[];
+
+  @Prop({ default: 0 })
+  upvotes: number;
+
+  @Prop({ default: 0 })
+  views: number;
+
+  @Prop({ default: 0 })
+  commentCount: number;
 }
 
 export type PostDocument = Post & Document;

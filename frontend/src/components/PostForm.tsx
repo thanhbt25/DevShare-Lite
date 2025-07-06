@@ -1,36 +1,56 @@
 // src/components/PostForm.tsx
-import React, { useState } from "react";
+import React from "react";
 import MDEditor from "@uiw/react-md-editor";
-import ReactMarkdown from "react-markdown";
 
-export interface PostFormValues {
+export type PostFormValues = {
   title: string;
-  body: string;
-  tags: string;
-  type: "blog" | "question";
-}
+  content: string;
+  isPublished: boolean;
+  authorId: string;
+  tags?: string[];
+};
+
 interface PostFormProps {
+  title: string;
+  setTitle: (value: string) => void;
+  content: string;
+  setContent: (value: string) => void;
+  isPublished: boolean;
+  setIsPublished: (value: boolean) => void;
+  tags: string[];
+  tagInput: string;
+  setTagInput: (value: string) => void;
+  handleTagInput: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  removeTag: (tag: string) => void;
   onSubmit: (data: PostFormValues) => void;
 }
 
-const PostForm: React.FC<PostFormProps> = ({ onSubmit }) => {
-  const [formData, setFormData] = useState<PostFormValues>({
-    title: "",
-    body: "",
-    tags: "",
-    type: "blog",
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-  const handleTypeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({ ...prev, type: e.target.value as "blog" | "question" }));
-  };
+const PostForm: React.FC<PostFormProps> = ({
+  title,
+  setTitle,
+  content,
+  setContent,
+  isPublished,
+  setIsPublished,
+  tags,
+  tagInput,
+  setTagInput,
+  handleTagInput,
+  removeTag,
+  onSubmit,
+}) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+
+    const payload: PostFormValues = {
+      title,
+      content,
+      isPublished,
+      authorId: "", // authorId sẽ được gắn ở CreatePostPage
+      tags,
+    };
+
+    onSubmit(payload);
   };
 
   return (
@@ -38,29 +58,26 @@ const PostForm: React.FC<PostFormProps> = ({ onSubmit }) => {
       {/* Title */}
       <div>
         <label htmlFor="title" className="block text-sm font-medium mb-1">
-          Topic
+          Title
         </label>
         <input
           type="text"
-          name="title"
           id="title"
-          value={formData.title}
-          onChange={handleChange as any}
-          placeholder="eg. this is a topic"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="e.g. Understanding React Hooks"
           className="w-full border border-gray-300 rounded-md px-3 py-2"
         />
       </div>
 
-      {/* Body */}
+      {/* Content */}
       <div data-color-mode="light">
-        <label htmlFor="body" className="block text-sm font-medium mb-1">
-          Body
+        <label htmlFor="content" className="block text-sm font-medium mb-1">
+          Content
         </label>
         <MDEditor
-          value={formData.body}
-          onChange={(value) =>
-            setFormData((prev) => ({ ...prev, body: value || "" }))
-          }
+          value={content}
+          onChange={(val) => setContent(val || "")}
           preview="edit"
           className="rounded-md"
           style={{ height: "300px" }}
@@ -70,57 +87,53 @@ const PostForm: React.FC<PostFormProps> = ({ onSubmit }) => {
       {/* Tags */}
       <div>
         <label htmlFor="tags" className="block text-sm font-medium mb-1">
-          Tags
+          Tags (press space to add)
         </label>
         <input
           type="text"
-          name="tags"
           id="tags"
-          value={formData.tags}
-          onChange={handleChange as any}
-          placeholder="e.g. javascript webdev tailwindcss"
+          value={tagInput}
+          onChange={(e) => setTagInput(e.target.value)}
+          onKeyDown={handleTagInput}
+          placeholder="e.g. reactjs tailwind node"
           className="w-full border border-gray-300 rounded-md px-3 py-2"
         />
-      </div>
 
-      {/* Post Type */}
-      <div className="flex items-center gap-6 mt-2">
-        <label className="flex items-center gap-2">
-          <input
-            type="radio"
-            name="type"
-            value="blog"
-            checked={formData.type === "blog"}
-            onChange={handleTypeChange}
-          />
-          Share your blog
-        </label>
-        <label className="flex items-center gap-2">
-          <input
-            type="radio"
-            name="type"
-            value="question"
-            checked={formData.type === "question"}
-            onChange={handleTypeChange}
-          />
-          Ask a question
-        </label>
+        {/* Display added tags */}
+        <div className="flex flex-wrap gap-2 mt-2">
+          {tags.map((tag, index) => (
+            <div
+              key={index}
+              className="bg-black text-white px-2 py-1 rounded-md flex items-center gap-1"
+            >
+              <span>#{tag}</span>
+              <button
+                type="button"
+                onClick={() => removeTag(tag)}
+                className="text-xs ml-1 text-gray-300 hover:text-red-400"
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Buttons */}
-      <div className="mt-4 flex gap-4">
+      <div className="flex gap-4 mt-4">
         <button
           type="submit"
-          className="bg-neutral-800 text-white px-4 py-2 rounded-md hover:bg-neutral-700"
+          className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-500"
+          onClick={() => setIsPublished(true)}
         >
-          Post
+          Create Post
         </button>
         <button
-          type="button"
-          className="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-500"
-          onClick={() => console.log("Saved as draft (not implemented yet)")}
+          type="submit"
+          onClick={() => setIsPublished(false)}
+          className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-400"
         >
-          Draft
+          Save as Draft
         </button>
       </div>
     </form>
