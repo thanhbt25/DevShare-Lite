@@ -115,4 +115,26 @@ export class PostsService {
     return post;
   }
 
+  async findAllPaginated(page: number, type: 'blog' | 'qa') {
+    const pageSize = 10;
+    const isBlog = type === 'blog';
+
+    const [posts, total] = await Promise.all([
+      this.postModel
+        .find({ isPublished: true, isBlog })
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * pageSize)
+        .limit(pageSize)
+        .exec(),
+      this.postModel.countDocuments({ isPublished: true, isBlog }),
+    ]);
+
+    return {
+      posts,
+      totalPages: Math.ceil(total / pageSize),
+      currentPage: page,
+    };
+  }
+
+
 }

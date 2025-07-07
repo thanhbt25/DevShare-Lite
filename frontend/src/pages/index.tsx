@@ -1,15 +1,41 @@
 import Head from "next/head";
-import Footer from "@/components/Footer";
-import PostCard from "@/components/PostCard";
-import ThreeColumnLayout from "@/components/ThreeColumnsLayout";
-import { useState } from "react";
+import Footer from "@/components/common/Footer";
+import PostCard from "@/components/post/PostCard";
+import ThreeColumnLayout from "@/components/common/ThreeColumnsLayout";
+import { useEffect, useState } from "react";
 import { FiTrendingUp, FiFilter } from "react-icons/fi";
-import '@/styles/globals.css';
+import axiosInstance from "@/utils/api";
+import "@/styles/globals.css";
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState<"blog" | "qa">("blog");
   const [sort, setSort] = useState<"newest" | "popular" | "unanswered">("newest");
   const [showFilter, setShowFilter] = useState(false);
+
+  const [posts, setPosts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      setLoading(true);
+      try {
+        const res = await axiosInstance.get("/posts", {
+          params: {
+            page: currentPage,
+            type: activeTab,
+          },
+        });
+        setPosts(res.data.posts);
+        setTotalPages(res.data.totalPages);
+      } catch (err) {
+        console.error("Failed to fetch posts", err);
+      }
+      setLoading(false);
+    };
+    fetchPosts();
+  }, [currentPage, activeTab]);
 
   const RightSidebar = (
     <div>
@@ -20,7 +46,6 @@ export default function HomePage() {
           <span className="text-sm">User {i}</span>
         </div>
       ))}
-
       <div className="mt-8">
         <div className="flex items-center gap-2 mb-2">
           <FiTrendingUp className="text-indigo-600" />
@@ -47,41 +72,42 @@ export default function HomePage() {
       </Head>
 
       <ThreeColumnLayout rightSidebar={RightSidebar}>
+        {/* Tabs */}
         <div className="flex space-x-4 border-b pb-2 mb-4">
           <button
-            onClick={() => setActiveTab("blog")}
-            className={`font-medium ${activeTab === "blog" ? "border-b-2 border-black" : "text-gray-400"}`}
+            onClick={() => { setActiveTab("blog"); setCurrentPage(1); }}
+            className={`font-medium ${
+              activeTab === "blog" ? "border-b-2 border-black" : "text-gray-400"
+            }`}
           >
             Blog
           </button>
           <button
-            onClick={() => setActiveTab("qa")}
-            className={`font-medium ${activeTab === "qa" ? "border-b-2 border-black" : "text-gray-400"}`}
+            onClick={() => { setActiveTab("qa"); setCurrentPage(1); }}
+            className={`font-medium ${
+              activeTab === "qa" ? "border-b-2 border-black" : "text-gray-400"
+            }`}
           >
             Q&A
           </button>
         </div>
 
+        {/* Sort options */}
         <div className="flex justify-between items-center mb-4">
           <div>
-            <button
-              className={`px-3 py-1 text-sm font-medium rounded ${sort === "newest" ? "bg-indigo-600 text-white" : "text-gray-400 hover:bg-indigo-100"}`}
-              onClick={() => setSort("newest")}
-            >
-              Newest
-            </button>
-            <button
-              className={`px-3 py-1 text-sm font-medium rounded ${sort === "popular" ? "bg-indigo-600 text-white" : "text-gray-400 hover:bg-indigo-100"}`}
-              onClick={() => setSort("popular")}
-            >
-              Popular
-            </button>
-            <button
-              className={`px-3 py-1 text-sm font-medium rounded ${sort === "unanswered" ? "bg-indigo-600 text-white" : "text-gray-400 hover:bg-indigo-100"}`}
-              onClick={() => setSort("unanswered")}
-            >
-              Unanswered
-            </button>
+            {["newest", "popular", "unanswered"].map((s) => (
+              <button
+                key={s}
+                className={`px-3 py-1 text-sm font-medium rounded ${
+                  sort === s
+                    ? "bg-indigo-600 text-white"
+                    : "text-gray-400 hover:bg-indigo-100"
+                }`}
+                onClick={() => setSort(s as any)}
+              >
+                {s.charAt(0).toUpperCase() + s.slice(1)}
+              </button>
+            ))}
           </div>
           <button
             className="flex items-center gap-1 bg-gray-200 px-3 py-1 rounded hover:bg-indigo-100"
@@ -91,6 +117,7 @@ export default function HomePage() {
           </button>
         </div>
 
+        {/* Filter popup */}
         {showFilter && (
           <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
             <div className="bg-white rounded-lg p-6 min-w-[300px] shadow-lg relative">
@@ -116,18 +143,42 @@ export default function HomePage() {
           </div>
         )}
 
-        {[1, 2, 3, 4, 5].map((item) => (
-          <PostCard key={item} type={activeTab} />
-        ))}
+        {/* Post cards */}
+        {loading ? (
+          <p>Loading posts...</p>
+        ) : posts.length === 0 ? (
+          <p>No posts found.</p>
+        ) : (
+          posts.map((post: any) => <PostCard key={post._id} post={post} />)
+        )}
 
+        {/* Pagination */}
         <div className="mt-6 flex justify-center gap-2">
-          <span className="text-gray-400">← Previous</span>
-          <button className="font-bold">1</button>
-          <button>2</button>
-          <button>3</button>
-          <span className="text-gray-400">...</span>
-          <button>68</button>
-          <span className="text-gray-400">Next →</span>
+          <button
+            className={`text-gray-500 ${currentPage === 1 ? "opacity-50 cursor-default" : ""}`}
+            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+            disabled={currentPage === 1}
+          >
+            ← Previous
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
+            <button
+              key={num}
+              onClick={() => setCurrentPage(num)}
+              className={`px-2 py-1 rounded ${
+                currentPage === num ? "font-bold bg-indigo-200" : ""
+              }`}
+            >
+              {num}
+            </button>
+          ))}
+          <button
+            className={`text-gray-500 ${currentPage === totalPages ? "opacity-50 cursor-default" : ""}`}
+            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+            disabled={currentPage === totalPages}
+          >
+            Next →
+          </button>
         </div>
       </ThreeColumnLayout>
     </div>

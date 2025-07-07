@@ -1,4 +1,4 @@
-import { Controller, Post, Patch, Get, Param, Body } from '@nestjs/common';
+import { Controller, Post, Patch, Get, Param, Body, Query } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -26,6 +26,12 @@ export class PostsController {
   findFavoritedByUser(@Param('userId') userId: string) {
     return this.postsService.findFavoritedByUser(userId);
   }
+
+  @Get()
+  findAll(@Query('page') page = '1', @Query('type') type: 'blog' | 'qa' = 'blog') {
+    return this.postsService.findAllPaginated(+page, type);
+  }
+
 
   @Get(':id')
   findById(@Param('id') id: string) {

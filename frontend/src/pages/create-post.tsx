@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import PostForm, { PostFormValues } from "@/components/PostForm";
+import Navbar from "@/components/common/Navbar";
+import Footer from "@/components/common/Footer";
+import PostForm, { PostFormValues } from "@/components/post/PostForm";
 import "@/styles/globals.css";
 import axiosInstance from "@/utils/api";
 

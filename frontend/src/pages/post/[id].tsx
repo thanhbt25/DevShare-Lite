@@ -2,15 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import axiosInstance from "@/utils/api";
-import ThreeColumnLayout from "@/components/ThreeColumnsLayout";
+import ThreeColumnLayout from "@/components/common/ThreeColumnsLayout";
 import "@/styles/globals.css";
 
-import {
-  FiThumbsUp,
-  FiThumbsDown,
-  FiHeart,
-  FiClock,
-} from "react-icons/fi";
+import { FiThumbsUp, FiThumbsDown, FiHeart, FiClock } from "react-icons/fi";
 
 const USER_ID = "686b351c3ca306d97ed2f21f"; // Replace with actual logged-in user ID
 
@@ -36,7 +31,8 @@ export default function PostDetailPage() {
           setFavorited(data.favoritedBy.includes(USER_ID));
 
           if (data.votedUpUsers?.includes(USER_ID)) setVoted("upvoted");
-          else if (data.votedDownUsers?.includes(USER_ID)) setVoted("downvoted");
+          else if (data.votedDownUsers?.includes(USER_ID))
+            setVoted("downvoted");
           else setVoted(null);
 
           setLoading(false);
@@ -64,7 +60,10 @@ export default function PostDetailPage() {
     if (!post) return;
     try {
       // Nếu đã vote kiểu đó rồi → thì bỏ vote
-      if ((type === "upvote" && voted === "upvoted") || (type === "downvote" && voted === "downvoted")) {
+      if (
+        (type === "upvote" && voted === "upvoted") ||
+        (type === "downvote" && voted === "downvoted")
+      ) {
         await axiosInstance.patch(`/posts/${post._id}/unvote/${USER_ID}`);
         setVoted(null);
       } else {
