@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FiHome, FiHelpCircle, FiTag, FiBookmark, FiUser } from "react-icons/fi";
+import { FiHome, FiHelpCircle, FiTag, FiHeart, FiUser } from "react-icons/fi";
 
 export default function Sidebar() {
   return (
@@ -14,7 +14,7 @@ export default function Sidebar() {
         <FiTag /> Tags
       </Link>
       <Link href="#" className="flex items-center gap-2 px-3 py-2 rounded hover:bg-indigo-100 font-medium text-indigo-700">
-        <FiBookmark /> Save
+        <FiHeart /> Favorites
       </Link>
       <Link href="#" className="flex items-center gap-2 px-3 py-2 rounded hover:bg-indigo-100 font-medium text-indigo-700">
         <FiUser /> User

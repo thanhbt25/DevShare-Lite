@@ -12,6 +12,7 @@ const CreatePostPage = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isPublished, setIsPublished] = useState(false);
+  const [isBlog, setIsBlog] = useState(true); // default is blog post
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
 
@@ -57,10 +58,10 @@ const CreatePostPage = () => {
 
       if (payload.isPublished) {
         setSuccessMessage("Post published successfully!");
-        setRedirectLink(`/posts/${createdPost._id}`);
+        setRedirectLink(`/post/${createdPost._id}`);
       } else {
         setSuccessMessage("Draft saved successfully!");
-        setRedirectLink(`/drafts/${createdPost._id}`);
+        setRedirectLink(`/draft/${createdPost._id}`);
       }
 
       resetForm();
@@ -121,6 +122,8 @@ const CreatePostPage = () => {
             setTagInput={setTagInput}
             handleTagInput={handleTagInput}
             removeTag={removeTag}
+            isBlog={isBlog}
+            setIsBlog={setIsBlog}
           />
         </div>
 

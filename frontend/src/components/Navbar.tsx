@@ -76,7 +76,7 @@ export default function Navbar() {
             {/* Avatar */}
             <div className="relative" ref={menuRef}>
               <img
-                src={user?.avatar || "/user.png"}
+                src={user?.avatar || "/images/default-user.png"}
                 alt="user avatar"
                 className="w-8 h-8 rounded-full cursor-pointer border border-white"
                 onClick={() => setShowMenu((prev) => !prev)}

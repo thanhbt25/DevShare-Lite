@@ -13,6 +13,10 @@ export class CreatePostDto {
   @IsOptional()
   isPublished?: boolean;
 
+  @IsBoolean()
+  @IsOptional()
+  isBlog?: boolean;
+
   @IsString()
   @IsNotEmpty()
   authorId: string;

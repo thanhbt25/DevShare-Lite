@@ -27,6 +27,11 @@ export class PostsController {
     return this.postsService.findFavoritedByUser(userId);
   }
 
+  @Get(':id')
+  findById(@Param('id') id: string) {
+    return this.postsService.findById(id);
+  }
+
   @Post(':id/favorite/:userId')
   addToFavorites(@Param('id') postId: string, @Param('userId') userId: string) {
     return this.postsService.addToFavorites(postId, userId);
@@ -35,5 +40,25 @@ export class PostsController {
   @Post(':id/unfavorite/:userId')
   removeFromFavorites(@Param('id') postId: string, @Param('userId') userId: string) {
     return this.postsService.removeFromFavorites(postId, userId);
+  }
+
+  @Post(':id/view')
+  addView(@Param('id') postId: string) {
+    return this.postsService.incrementView(postId);
+  }
+
+  @Post(':id/upvote/:userId')
+  upvote(@Param('id') postId: string, @Param('userId') userId: string) {
+    return this.postsService.upvote(postId, userId);
+  }
+
+  @Post(':id/downvote/:userId')
+  downvote(@Param('id') postId: string, @Param('userId') userId: string) {
+    return this.postsService.downvote(postId, userId);
+  }
+
+  @Patch(':id/unvote/:userId')
+  unvote(@Param('id') postId: string, @Param('userId') userId: string) {
+    return this.postsService.unvote(postId, userId);
   }
 }

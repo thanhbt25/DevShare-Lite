@@ -8,6 +8,7 @@ export type PostFormValues = {
   isPublished: boolean;
   authorId: string;
   tags?: string[];
+  isBlog?: boolean;
 };
 
 interface PostFormProps {
@@ -17,6 +18,8 @@ interface PostFormProps {
   setContent: (value: string) => void;
   isPublished: boolean;
   setIsPublished: (value: boolean) => void;
+  isBlog: boolean;
+  setIsBlog: (value: boolean) => void;
   tags: string[];
   tagInput: string;
   setTagInput: (value: string) => void;
@@ -32,6 +35,8 @@ const PostForm: React.FC<PostFormProps> = ({
   setContent,
   isPublished,
   setIsPublished,
+  isBlog,
+  setIsBlog,
   tags,
   tagInput,
   setTagInput,
@@ -48,13 +53,17 @@ const PostForm: React.FC<PostFormProps> = ({
       isPublished,
       authorId: "", // authorId sẽ được gắn ở CreatePostPage
       tags,
+      isBlog,
     };
 
     onSubmit(payload);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-violet-50 rounded-md p-6 space-y-6">
+    <form
+      onSubmit={handleSubmit}
+      className="bg-violet-50 rounded-md p-6 space-y-6"
+    >
       {/* Title */}
       <div>
         <label htmlFor="title" className="block text-sm font-medium mb-1">
@@ -116,6 +125,35 @@ const PostForm: React.FC<PostFormProps> = ({
               </button>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Blog or question */}
+      <div className="mb-4">
+        <label className="block text-gray-700 font-medium mb-2">
+          Post Type
+        </label>
+        <div className="flex gap-4">
+          <label className="flex items-center">
+            <input
+              type="radio"
+              value="blog"
+              checked={isBlog === true}
+              onChange={() => setIsBlog(true)}
+              className="mr-2"
+            />
+            Blog
+          </label>
+          <label className="flex items-center">
+            <input
+              type="radio"
+              value="question"
+              checked={isBlog === false}
+              onChange={() => setIsBlog(false)}
+              className="mr-2"
+            />
+            Question
+          </label>
         </div>
       </div>
 
