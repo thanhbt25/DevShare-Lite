@@ -1,5 +1,12 @@
 import React from "react";
 import { FiThumbsUp, FiThumbsDown, FiHeart, FiClock } from "react-icons/fi";
+import MarkdownEditor from "@/components/common/MarkdownEditor";
+
+type CommentType = {
+  content: string;
+  author: { username: string };
+  createdAt: string;
+};
 
 type Props = {
   post: any;
@@ -11,6 +18,10 @@ type Props = {
   handleVote: (type: "upvote" | "downvote") => void;
   handleFavorite: () => void;
   handleCommentSubmit: () => void;
+  upvoteCount: number;
+  downvoteCount: number;
+  saveCount: number;
+  comments: CommentType[]; // ✅ Thêm props comments từ backend
 };
 
 const PostMainContent: React.FC<Props> = ({
@@ -23,6 +34,10 @@ const PostMainContent: React.FC<Props> = ({
   handleVote,
   handleFavorite,
   handleCommentSubmit,
+  upvoteCount,
+  downvoteCount,
+  saveCount,
+  comments,
 }) => {
   return (
     <div className="flex gap-6 items-start">
@@ -38,6 +53,7 @@ const PostMainContent: React.FC<Props> = ({
           }`}
         >
           <FiThumbsUp size={20} />
+          <div className="text-xs mt-1">{upvoteCount}</div>
         </button>
 
         <button
@@ -50,6 +66,7 @@ const PostMainContent: React.FC<Props> = ({
           }`}
         >
           <FiThumbsDown size={20} />
+          <div className="text-xs mt-1">{downvoteCount}</div>
         </button>
 
         <button
@@ -67,6 +84,7 @@ const PostMainContent: React.FC<Props> = ({
               favorited ? "fill-red-600 text-red-600" : ""
             } transition-all`}
           />
+          <div className="text-xs mt-1">{saveCount}</div>
         </button>
 
         <button
@@ -114,26 +132,50 @@ const PostMainContent: React.FC<Props> = ({
 
         <div className="bg-white border rounded-md p-4 min-h-[200px] mb-4 shadow-sm">
           <p>{post?.content || "Nội dung đang được cập nhật."}</p>
+          {/* Hiển thị "By [username]" ở cuối bài viết */}
+          {post?.author?.username && (
+            <p className="text-sm text-right text-gray-500 mt-4 italic">
+              By {post.author.username}
+            </p>
+          )}
         </div>
 
-        {/* Comment box */}
-        <div className="bg-white border rounded-md p-4 shadow-sm">
+        {/* MarkdownEditor for comment input */}
+        <div className="bg-white border rounded-md p-4 shadow-sm mb-6">
           <label className="block text-sm font-medium mb-2">
             Your answer / comment
           </label>
-          <textarea
-            className="w-full border rounded-md p-2 mb-4 min-h-[120px] focus:outline-none focus:ring focus:border-indigo-300"
-            placeholder="Nhập câu trả lời hoặc bình luận của bạn..."
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
+          <MarkdownEditor
+            content={comment}
+            setContent={setComment}
+            placeholder="Nhập bình luận hoặc câu trả lời bằng markdown..."
+            height={200}
           />
           <button
             onClick={handleCommentSubmit}
-            className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
+            className="mt-4 bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
           >
             Post
           </button>
         </div>
+
+        {/* List of comments */}
+        {comments.length > 0 && (
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Comments</h3>
+            {comments.map((cmt, idx) => (
+              <div key={idx} className="bg-gray-50 p-4 border rounded-md">
+                <div className="text-sm text-gray-600 mb-2">
+                  {cmt.author?.username || "Anonymous"} -{" "}
+                  {new Date(cmt.createdAt).toLocaleString()}
+                </div>
+                <div className="text-gray-800 text-sm whitespace-pre-line">
+                  {cmt.content}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

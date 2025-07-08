@@ -20,13 +20,11 @@ export default function PostDetailPage() {
   const [favorited, setFavorited] = useState(false);
   const [voted, setVoted] = useState<"upvoted" | "downvoted" | null>(null);
   const [comment, setComment] = useState("");
+  const [comments, setComments] = useState<any[]>([]); // Lưu danh sách comment riêng
 
+  // Debug context user
   useEffect(() => {
     console.log("👤 Current user from context:", user);
-    console.log("Current id: ", user?._id);
-    console.log("Current username: ", user?.username);
-    console.log("Current email: ", user?.email);
-    console.log("Current avatar: ", user?.avatar);
   }, [user]);
 
   // Fetch bài viết
@@ -41,7 +39,7 @@ export default function PostDetailPage() {
           setPost(data);
 
           if (user) {
-            setFavorited(data.favoritedBy.includes(user._id));
+            setFavorited(data.favoritedBy?.includes(user._id));
             if (data.votedUpUsers?.includes(user._id)) setVoted("upvoted");
             else if (data.votedDownUsers?.includes(user._id))
               setVoted("downvoted");
@@ -54,6 +52,16 @@ export default function PostDetailPage() {
     }
   }, [id, user]);
 
+  // Fetch comment riêng từ bảng comments theo postId
+  useEffect(() => {
+    if (typeof id === "string") {
+      axiosInstance
+        .get(`/comments/post/${id}`)
+        .then((res) => setComments(res.data))
+        .catch((err) => console.error("Comment fetch error:", err));
+    }
+  }, [id]);
+
   const handleFavorite = async () => {
     if (!post || !user) return alert("Bạn cần đăng nhập để lưu bài viết");
     try {
@@ -64,6 +72,9 @@ export default function PostDetailPage() {
         await axiosInstance.post(`/posts/${post._id}/favorite/${user._id}`);
         setFavorited(true);
       }
+
+      const res = await axiosInstance.get(`/posts/${post._id}`);
+      setPost(res.data);
     } catch (err) {
       console.error("Favorite toggle error:", err);
     }
@@ -96,31 +107,19 @@ export default function PostDetailPage() {
     if (!comment.trim()) return;
 
     try {
-      await axiosInstance.post(`/posts/${post._id}/comment`, {
+      await axiosInstance.post(`/comments`, {
         content: comment,
         authorId: user._id,
+        postId: post._id,
       });
       setComment("");
-      const res = await axiosInstance.get(`/posts/${post._id}`);
-      setPost(res.data);
+
+      const res = await axiosInstance.get(`/comments/post/${post._id}`);
+      setComments(res.data);
     } catch (err) {
       console.error("Comment error:", err);
     }
   };
-
-  const MainContent = (
-    <PostMainContent
-      post={post}
-      loading={loading}
-      favorited={favorited}
-      voted={voted}
-      comment={comment}
-      setComment={setComment}
-      handleVote={handleVote}
-      handleFavorite={handleFavorite}
-      handleCommentSubmit={handleCommentSubmit}
-    />
-  );
 
   return (
     <div className="flex flex-col min-h-screen bg-white text-gray-800">
@@ -129,7 +128,21 @@ export default function PostDetailPage() {
       </Head>
 
       <ThreeColumnLayout rightSidebar={<RightSidebar />}>
-        {MainContent}
+        <PostMainContent
+          post={post}
+          loading={loading}
+          favorited={favorited}
+          voted={voted}
+          comment={comment}
+          setComment={setComment}
+          handleVote={handleVote}
+          handleFavorite={handleFavorite}
+          handleCommentSubmit={handleCommentSubmit}
+          upvoteCount={post?.votes?.up || 0}
+          downvoteCount={post?.votes?.down || 0}
+          saveCount={post?.favorites?.length || 0}
+          comments={comments}
+        />
       </ThreeColumnLayout>
     </div>
   );

@@ -16,7 +16,7 @@ export default function UpdateProfilePage() {
   const router = useRouter();
   const { user, setUser } = useUser();
 
-  const userId = user?._id || user?.id; // ✅ fix lỗi _id undefined
+  const userId = user?._id || user?.id; 
 
   const [form, setForm] = useState({
     username: user?.username || "",
