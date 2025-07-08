@@ -8,6 +8,7 @@ import PostForm, { PostFormValues } from "@/components/post/PostForm";
 import "@/styles/globals.css";
 import axiosInstance from "@/utils/api";
 import { useUser } from "@/contexts/UserContext";
+import MarkdownEditor from "@/components/common/MarkdownEditor";
 
 const CreatePostPage = () => {
   const router = useRouter();

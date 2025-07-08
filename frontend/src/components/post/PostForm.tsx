@@ -1,6 +1,5 @@
-// src/components/PostForm.tsx
 import React from "react";
-import MDEditor from "@uiw/react-md-editor";
+import MarkdownEditor from "@/components/common/MarkdownEditor"
 
 export type PostFormValues = {
   title: string;
@@ -84,13 +83,7 @@ const PostForm: React.FC<PostFormProps> = ({
         <label htmlFor="content" className="block text-sm font-medium mb-1">
           Content
         </label>
-        <MDEditor
-          value={content}
-          onChange={(val) => setContent(val || "")}
-          preview="edit"
-          className="rounded-md"
-          style={{ height: "300px" }}
-        />
+        <MarkdownEditor content={content} setContent={setContent} />
       </div>
 
       {/* Tags */}
