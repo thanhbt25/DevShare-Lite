@@ -1,23 +1,35 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import axiosInstance from "@/utils/api";
 import ThreeColumnLayout from "@/components/common/ThreeColumnsLayout";
+import { useUser } from "@/contexts/UserContext";
 import "@/styles/globals.css";
 
 import { FiThumbsUp, FiThumbsDown, FiHeart, FiClock } from "react-icons/fi";
 
-const USER_ID = "686b351c3ca306d97ed2f21f"; // Replace with actual logged-in user ID
-
 export default function PostDetailPage() {
   const router = useRouter();
   const { id } = router.query;
+  const { user } = useUser(); 
 
   const [post, setPost] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [favorited, setFavorited] = useState(false);
   const [voted, setVoted] = useState<"upvoted" | "downvoted" | null>(null);
+  const [comment, setComment] = useState("");
 
+  useEffect(() => {
+    console.log("👤 Current user from context:", user);
+    console.log("Current id: ", user?._id);
+    console.log("Current username: ", user?.username);
+    console.log("Current email: ", user?.email);
+    console.log("Current avatar: ", user?.avatar);
+  }, [user]);
+
+  // Fetch bài viết
   useEffect(() => {
     if (typeof id === "string") {
       axiosInstance.post(`/posts/${id}/view`);
@@ -28,27 +40,28 @@ export default function PostDetailPage() {
           const data = res.data;
           setPost(data);
 
-          setFavorited(data.favoritedBy.includes(USER_ID));
-
-          if (data.votedUpUsers?.includes(USER_ID)) setVoted("upvoted");
-          else if (data.votedDownUsers?.includes(USER_ID))
-            setVoted("downvoted");
-          else setVoted(null);
+          if (user) {
+            setFavorited(data.favoritedBy.includes(user._id));
+            if (data.votedUpUsers?.includes(user._id)) setVoted("upvoted");
+            else if (data.votedDownUsers?.includes(user._id))
+              setVoted("downvoted");
+            else setVoted(null);
+          }
 
           setLoading(false);
         })
         .catch(() => setLoading(false));
     }
-  }, [id]);
+  }, [id, user]);
 
   const handleFavorite = async () => {
-    if (!post) return;
+    if (!post || !user) return alert("Bạn cần đăng nhập để lưu bài viết");
     try {
       if (favorited) {
-        await axiosInstance.post(`/posts/${post._id}/unfavorite/${USER_ID}`);
+        await axiosInstance.post(`/posts/${post._id}/unfavorite/${user._id}`);
         setFavorited(false);
       } else {
-        await axiosInstance.post(`/posts/${post._id}/favorite/${USER_ID}`);
+        await axiosInstance.post(`/posts/${post._id}/favorite/${user._id}`);
         setFavorited(true);
       }
     } catch (err) {
@@ -57,24 +70,41 @@ export default function PostDetailPage() {
   };
 
   const handleVote = async (type: "upvote" | "downvote") => {
-    if (!post) return;
+    if (!post || !user) return alert("Bạn cần đăng nhập để vote");
+
     try {
-      // Nếu đã vote kiểu đó rồi → thì bỏ vote
       if (
         (type === "upvote" && voted === "upvoted") ||
         (type === "downvote" && voted === "downvoted")
       ) {
-        await axiosInstance.patch(`/posts/${post._id}/unvote/${USER_ID}`);
+        await axiosInstance.patch(`/posts/${post._id}/unvote/${user._id}`);
         setVoted(null);
       } else {
-        await axiosInstance.post(`/posts/${post._id}/${type}/${USER_ID}`);
+        await axiosInstance.post(`/posts/${post._id}/${type}/${user._id}`);
         setVoted(type === "upvote" ? "upvoted" : "downvoted");
       }
-      // Sau mỗi hành động, lấy lại dữ liệu mới
+
       const res = await axiosInstance.get(`/posts/${post._id}`);
       setPost(res.data);
     } catch (err) {
       console.error("Voting error:", err);
+    }
+  };
+
+  const handleCommentSubmit = async () => {
+    if (!user || !post) return alert("Bạn cần đăng nhập để bình luận");
+    if (!comment.trim()) return;
+
+    try {
+      await axiosInstance.post(`/posts/${post._id}/comment`, {
+        content: comment,
+        authorId: user._id,
+      });
+      setComment("");
+      const res = await axiosInstance.get(`/posts/${post._id}`);
+      setPost(res.data);
+    } catch (err) {
+      console.error("Comment error:", err);
     }
   };
 
@@ -92,7 +122,6 @@ export default function PostDetailPage() {
   const MainContent = (
     <div className="flex gap-6 items-start">
       <div className="w-14 flex flex-col items-center gap-5 py-4 bg-gray-50 border rounded-md shadow-sm shrink-0">
-        {/* Upvote */}
         <button
           title="Upvote"
           onClick={() => handleVote("upvote")}
@@ -105,7 +134,6 @@ export default function PostDetailPage() {
           <FiThumbsUp size={20} />
         </button>
 
-        {/* Downvote */}
         <button
           title="Downvote"
           onClick={() => handleVote("downvote")}
@@ -118,7 +146,6 @@ export default function PostDetailPage() {
           <FiThumbsDown size={20} />
         </button>
 
-        {/* Favorite */}
         <button
           title="Save"
           onClick={handleFavorite}
@@ -136,7 +163,6 @@ export default function PostDetailPage() {
           />
         </button>
 
-        {/* Watch later */}
         <button
           title="Watch later"
           className="p-2 rounded-full text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition"
@@ -183,14 +209,6 @@ export default function PostDetailPage() {
           <p>{post?.content || "Nội dung đang được cập nhật."}</p>
         </div>
 
-        <div className="bg-white border rounded-md p-4 mb-4 shadow-sm">
-          <p className="font-semibold mb-2">Câu hỏi liên quan</p>
-          <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
-            <li>Câu hỏi liên quan 1</li>
-            <li>Câu hỏi liên quan 2</li>
-          </ul>
-        </div>
-
         <div className="bg-white border rounded-md p-4 shadow-sm">
           <label className="block text-sm font-medium mb-2">
             Your answer / comment
@@ -198,8 +216,13 @@ export default function PostDetailPage() {
           <textarea
             className="w-full border rounded-md p-2 mb-4 min-h-[120px] focus:outline-none focus:ring focus:border-indigo-300"
             placeholder="Nhập câu trả lời hoặc bình luận của bạn..."
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
           />
-          <button className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition">
+          <button
+            onClick={handleCommentSubmit}
+            className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition"
+          >
             Post
           </button>
         </div>

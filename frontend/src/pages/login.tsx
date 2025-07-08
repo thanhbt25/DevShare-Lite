@@ -2,15 +2,15 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import API from "../utils/api"; 
+import API from "../utils/api";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { useUser } from "@/contexts/UserContext";
-import "@/styles/globals.css"; 
+import "@/styles/globals.css";
 
 export default function Login() {
   const router = useRouter();
-  const { setUser } = useUser(); 
+  const { setUser } = useUser();
   const [form, setForm] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
 
@@ -24,11 +24,17 @@ export default function Login() {
 
     try {
       const res = await API.post("/auth/login", form);
-      const plainUser = res.data._doc ?? res.data;
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-      Cookies.set("access_token", res.data.access_token, { expires: 7 }); 
-      
-      setUser(plainUser); 
+
+      // 👇 Đây là phần đúng để lấy user từ res.data
+      const userRaw = res.data.user ?? res.data;
+
+      // 👇 Nếu có _doc (Mongoose Document), thì lấy _doc, nếu không thì dùng luôn
+      const plainUser = userRaw._doc ?? userRaw;
+
+      localStorage.setItem("user", JSON.stringify(plainUser));
+      Cookies.set("access_token", res.data.access_token, { expires: 7 });
+
+      setUser(plainUser);
       router.push("/");
     } catch (err: any) {
       setError(err?.response?.data?.message || "Login failed");

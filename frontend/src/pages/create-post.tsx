@@ -1,13 +1,17 @@
-import React, { useState } from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Navbar from "@/components/common/Navbar";
 import Footer from "@/components/common/Footer";
 import PostForm, { PostFormValues } from "@/components/post/PostForm";
 import "@/styles/globals.css";
 import axiosInstance from "@/utils/api";
+import { useUser } from "@/contexts/UserContext";
 
 const CreatePostPage = () => {
   const router = useRouter();
+  const { user } = useUser();
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -20,7 +24,21 @@ const CreatePostPage = () => {
   const [redirectLink, setRedirectLink] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const authorId = "66bfbd5f7f0b123456789abc"; // sau này thay bằng ID thật từ auth
+  useEffect(() => {
+    console.log("👤 Current user from context:", user);
+    console.log("Current id: ", user?._id);
+    console.log("Current username: ", user?.username);
+    console.log("Current email: ", user?.email);
+    console.log("Current avatar: ", user?.avatar);
+  }, [user]);
+
+  // Nếu chưa đăng nhập thì redirect về trang đăng nhập
+  if (!user) {
+    if (typeof window !== "undefined") {
+      router.push("/login");
+    }
+    return null;
+  }
 
   const handleTagInput = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === " " && tagInput.trim() !== "") {
@@ -49,7 +67,7 @@ const CreatePostPage = () => {
     try {
       const payload: PostFormValues = {
         ...data,
-        authorId,
+        authorId: user._id,
         tags,
       };
 

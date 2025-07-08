@@ -15,10 +15,10 @@ export default function UpdateProfilePage() {
   const { user, setUser } = useUser();
 
   const [form, setForm] = useState({
-    username: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
+    username: user?.username || "",
+    email: user?.email || "",
+    password: user?.password || "",
+    confirmPassword: user?.password || "",
     avatar: "",
   });
   const [previewAvatar, setPreviewAvatar] = useState("");
@@ -27,7 +27,7 @@ export default function UpdateProfilePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
     console.log("👤 Current user from context:", user);
-    console.log("Current id: ", user?.id);
+    console.log("Current id: ", user?._id);
     console.log("Current username: ", user?.username);
     console.log("Current email: ", user?.email);
     console.log("Current avatar: ", user?.avatar);
@@ -88,7 +88,7 @@ export default function UpdateProfilePage() {
     try {
       setLoading(true);
       const token = Cookies.get("access_token");
-      const res = await API.patch(`/users/${user?.id}`, form, {
+      const res = await API.patch(`/users/${user?._id}`, form, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
