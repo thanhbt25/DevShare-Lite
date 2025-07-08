@@ -16,20 +16,24 @@ export default function UpdateProfilePage() {
   const router = useRouter();
   const { user, setUser } = useUser();
 
+  const userId = user?._id || user?.id; // ✅ fix lỗi _id undefined
+
   const [form, setForm] = useState({
     username: user?.username || "",
     email: user?.email || "",
-    password: user?.password || "",
-    confirmPassword: user?.password || "",
+    password: "",
+    confirmPassword: "",
     avatar: "",
   });
+
   const [previewAvatar, setPreviewAvatar] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     console.log("👤 Current user from context:", user);
-    console.log("Current id: ", user?._id);
+    console.log("Current id: ", userId);
     console.log("Current username: ", user?.username);
     console.log("Current email: ", user?.email);
     console.log("Current avatar: ", user?.avatar);
@@ -90,14 +94,32 @@ export default function UpdateProfilePage() {
     try {
       setLoading(true);
       const token = Cookies.get("access_token");
-      const res = await API.patch(`/users/${user?._id}`, form, {
+
+      const updatePayload: any = {
+        username: form.username,
+        email: form.email,
+        avatar: form.avatar,
+      };
+      if (form.password.trim() !== "") {
+        updatePayload.password = form.password;
+      }
+
+      const res = await API.patch(`/users/${userId}`, updatePayload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      setUser(res.data);
-      localStorage.setItem("user", JSON.stringify(res.data));
+      // Xử lý dữ liệu trả về để đảm bảo _id tồn tại
+      const userRaw = res.data.user ?? res.data;
+      const plainUser = userRaw._doc ?? userRaw;
+
+      if (!plainUser._id && plainUser.id) {
+        plainUser._id = plainUser.id;
+      }
+
+      setUser(plainUser);
+      localStorage.setItem("user", JSON.stringify(plainUser));
       setMessage("Profile updated successfully!");
     } catch (err: any) {
       setMessage(err?.response?.data?.message || "Update failed");
@@ -105,6 +127,7 @@ export default function UpdateProfilePage() {
       setLoading(false);
     }
   };
+
   if (!user) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-indigo-50">

@@ -4,11 +4,12 @@ import { createContext, useContext, useEffect, useState } from "react";
 import axiosInstance from "@/utils/api";
 
 interface User {
+  id: string;
   _id: string;
   username: string;
   email?: string;
   avatar?: string;
-  password?: string;
+  // password?: string;
 }
 
 interface UserContextType {

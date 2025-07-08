@@ -25,10 +25,7 @@ export default function Login() {
     try {
       const res = await API.post("/auth/login", form);
 
-      // 👇 Đây là phần đúng để lấy user từ res.data
       const userRaw = res.data.user ?? res.data;
-
-      // 👇 Nếu có _doc (Mongoose Document), thì lấy _doc, nếu không thì dùng luôn
       const plainUser = userRaw._doc ?? userRaw;
 
       localStorage.setItem("user", JSON.stringify(plainUser));
