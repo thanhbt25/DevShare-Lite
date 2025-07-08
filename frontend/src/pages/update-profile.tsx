@@ -10,6 +10,8 @@ import Sidebar from "@/components/common/Sidebar";
 import Footer from "@/components/common/Footer";
 import "@/styles/globals.css";
 
+import UpdateProfileForm from "@/components/update-profile/UpdateProfileForm";
+
 export default function UpdateProfilePage() {
   const router = useRouter();
   const { user, setUser } = useUser();
@@ -130,135 +132,15 @@ export default function UpdateProfilePage() {
         </div>
 
         <main className="flex-1 bg-indigo-50 py-10 px-6 flex justify-center items-start">
-          <div className="w-full max-w-2xl bg-white p-8 rounded-lg shadow-lg">
-            {/* Title */}
-            <h2 className="text-3xl font-bold text-center mb-10 text-indigo-700 tracking-wide">
-              Update Your Profile
-            </h2>
-
-            {/* Avatar */}
-            <div className="flex justify-center mb-8 relative group">
-              <img
-                src={previewAvatar}
-                alt="avatar"
-                className="w-28 h-28 rounded-full border shadow-md object-cover cursor-pointer"
-                onClick={handleAvatarClick}
-              />
-              <div
-                className="absolute inset-0 rounded-full bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer"
-                onClick={handleAvatarClick}
-              >
-                <span className="text-white text-2xl font-bold">+</span>
-              </div>
-              <input
-                type="file"
-                accept="image/*"
-                ref={fileInputRef}
-                className="hidden"
-                onChange={handleFileChange}
-              />
-            </div>
-
-            {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Avatar URL */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Avatar URL
-                </label>
-                <input
-                  type="text"
-                  name="avatar"
-                  value={form.avatar}
-                  onChange={handleChange}
-                  placeholder={user?.avatar || "Enter avatar URL"}
-                  className="w-full border rounded px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring focus:ring-indigo-300"
-                />
-              </div>
-
-              {/* Username */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Username
-                </label>
-                <input
-                  type="text"
-                  name="username"
-                  value={form.username}
-                  onChange={handleChange}
-                  placeholder={user?.username || "Enter your username"}
-                  className="w-full border rounded px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring focus:ring-indigo-300"
-                />
-              </div>
-
-              {/* Email */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  placeholder={user?.email || "Enter your email"}
-                  className="w-full border rounded px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring focus:ring-indigo-300"
-                />
-              </div>
-
-              {/* Password */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  New Password
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  value={form.password}
-                  onChange={handleChange}
-                  placeholder="Enter new password"
-                  className="w-full border rounded px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring focus:ring-indigo-300"
-                />
-              </div>
-
-              {/* Confirm Password */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Confirm New Password
-                </label>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={form.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="Repeat your new password"
-                  className="w-full border rounded px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring focus:ring-indigo-300"
-                />
-              </div>
-
-              {/* Message */}
-              {message && (
-                <p
-                  className={`text-center font-medium text-sm ${
-                    message.includes("successfully")
-                      ? "text-green-600"
-                      : "text-red-600"
-                  }`}
-                >
-                  {message}
-                </p>
-              )}
-
-              {/* Submit button */}
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition font-semibold"
-              >
-                {loading ? "Updating..." : "Update Profile"}
-              </button>
-            </form>
-          </div>
+          <UpdateProfileForm
+            form={form}
+            previewAvatar={previewAvatar}
+            loading={loading}
+            message={message}
+            handleChange={handleChange}
+            handleFileChange={handleFileChange}
+            handleSubmit={handleSubmit}
+          />
         </main>
       </div>
       <Footer />

@@ -4,11 +4,10 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Navbar from "@/components/common/Navbar";
 import Footer from "@/components/common/Footer";
-import PostForm, { PostFormValues } from "@/components/post/PostForm";
+import PostForm, { PostFormValues } from "@/components/create-post/PostForm";
 import "@/styles/globals.css";
 import axiosInstance from "@/utils/api";
 import { useUser } from "@/contexts/UserContext";
-import MarkdownEditor from "@/components/common/MarkdownEditor";
 
 const CreatePostPage = () => {
   const router = useRouter();
