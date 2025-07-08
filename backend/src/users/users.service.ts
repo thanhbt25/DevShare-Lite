@@ -25,7 +25,14 @@ export class UsersService {
     }).exec();
   }
 
+  async findByEmail(email: string): Promise<User | null> {
+    return this.userModel.findOne({
+      email: email.toLowerCase(),
+    }).exec();
+  }
+
   async update(id: string, data: Partial<User>): Promise<User | null> {
+    console.log("Updating user with ID:", id, "Data:", data);
     return this.userModel.findByIdAndUpdate(id, data, { new: true }).exec();
   }
 }

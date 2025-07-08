@@ -30,9 +30,14 @@ export class AuthService {
   async register(data: { username: string; email: string; password: string }) {
     const { username, email, password } = data;
 
-    // Check if user already exists
-    const existingUser = await this.usersService.findByUsername(username);
-    if (existingUser) {
+    // Check if user already exists by username or email
+    const existingUserByEmail = await this.usersService.findByEmail(email);
+    if (existingUserByEmail) {
+      throw new BadRequestException('Email already exists');
+    }
+    
+    const existingUserByName = await this.usersService.findByUsername(username);
+    if (existingUserByName) {
       throw new BadRequestException('Username already exists');
     }
 

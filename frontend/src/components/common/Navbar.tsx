@@ -1,24 +1,17 @@
+"use client";
+
 import Link from "next/link";
 import { FiPlusSquare, FiBell, FiSearch } from "react-icons/fi";
-import { useState, useEffect, useRef} from "react";
+import { useState, useEffect, useRef } from "react";
 import Cookies from "js-cookie";
+import { useUser } from "@/contexts/UserContext";
 
 export default function Navbar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [user, setUser] =  useState<{ username: string; email: string; avatar?: string} | null>(null);
+  const { user, setUser } = useUser(); // Sử dụng context
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const token = Cookies.get("access_token");
-    const storedUser = Cookies.get("user");
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-    }
-    setIsLoggedIn(!!token);
-  }, []);
-
-  // Ẩn menu khi click ra ngoài
+  // Ẩn dropdown khi click ra ngoài
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
@@ -31,8 +24,7 @@ export default function Navbar() {
 
   const handleLogout = () => {
     Cookies.remove("access_token");
-    Cookies.remove("user");
-    setIsLoggedIn(false);
+    localStorage.removeItem("user");
     setUser(null);
     window.location.href = "/";
   };
@@ -50,6 +42,7 @@ export default function Navbar() {
 
       {/* Title */}
       <h1 className="text-2xl font-bold ml-4">DevShare Lite</h1>
+
       {/* Search center */}
       <div className="flex-1 flex justify-center">
         <div className="relative w-full max-w-xl">
@@ -63,9 +56,10 @@ export default function Navbar() {
           </button>
         </div>
       </div>
-      {/* Action */}
+
+      {/* Actions */}
       <div className="flex gap-10 items-center ml-4">
-        {isLoggedIn ? (
+        {user ? (
           <>
             <Link href="/create-post" aria-label="Add Post">
               <FiPlusSquare size={28} className="hover:text-indigo-200" />
@@ -73,16 +67,20 @@ export default function Navbar() {
             <Link href="#" aria-label="Notifications">
               <FiBell size={28} className="hover:text-indigo-200" />
             </Link>
-            {/* Avatar */}
+
+            {/* Avatar dropdown */}
             <div className="relative" ref={menuRef}>
               <img
-                src={user?.avatar || "/images/default-user.png"}
+                src={user.avatar || "/images/default-user.png"}
                 alt="user avatar"
                 className="w-8 h-8 rounded-full cursor-pointer border border-white"
                 onClick={() => setShowMenu((prev) => !prev)}
               />
               {showMenu && (
                 <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded shadow z-10">
+                  <div className="px-4 py-2 text-sm font-medium border-b">
+                    {user.username}
+                  </div>
                   <Link
                     href="/update-profile"
                     className="block px-4 py-2 hover:bg-indigo-100 text-sm"

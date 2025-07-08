@@ -7,6 +7,8 @@ import "@/styles/globals.css";
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const router = useRouter();
 
   const [form, setForm] = useState({
@@ -23,14 +25,16 @@ export default function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+    setSuccess("");
 
     if (!form.username || !form.email || !form.password || !form.confirm) {
-      alert("Please fill in all fields.");
+      setError("Please fill in all fields.");
       return;
     }
 
     if (form.password !== form.confirm) {
-      alert("Passwords do not match");
+      setError("Passwords do not match.");
       return;
     }
 
@@ -41,13 +45,30 @@ export default function Register() {
         password: form.password,
       });
 
-      alert("Registered successfully!");
-      router.push("/login");
+      setSuccess("Registered successfully! Redirecting to login...");
+      setTimeout(() => router.push("/login"), 1500);
     } catch (error: any) {
-      console.error(error);
-      const message =
-        error?.response?.data?.message || "Registration failed!";
-      alert(message);
+      const message = error?.response?.data?.message;
+
+      // Nếu message là mảng (do class-validator)
+      if (Array.isArray(message)) {
+        setError(message.join(", "));
+      } else if (typeof message === "string") {
+        // Nếu là lỗi trùng lặp (email hoặc username)
+        if (message.toLowerCase().includes("duplicate")) {
+          if (message.includes("username")) {
+            setError("Username already exists.");
+          } else if (message.includes("email")) {
+            setError("Email already exists.");
+          } else {
+            setError("Account already exists.");
+          }
+        } else {
+          setError(message);
+        }
+      } else {
+        setError("Registration failed!");
+      }
     }
   };
 
@@ -59,7 +80,6 @@ export default function Register() {
         </h2>
 
         <form onSubmit={handleSubmit}>
-          {/* Username */}
           <div className="mb-4">
             <label className="block text-indigo-700 mb-1" htmlFor="username">
               Username
@@ -75,7 +95,6 @@ export default function Register() {
             />
           </div>
 
-          {/* Email */}
           <div className="mb-4">
             <label className="block text-indigo-700 mb-1" htmlFor="email">
               Email
@@ -91,7 +110,6 @@ export default function Register() {
             />
           </div>
 
-          {/* Password */}
           <div className="mb-4 relative">
             <label className="block text-indigo-700 mb-1" htmlFor="password">
               Password
@@ -107,7 +125,6 @@ export default function Register() {
             />
           </div>
 
-          {/* Confirm Password */}
           <div className="mb-6 relative">
             <label className="block text-indigo-700 mb-1" htmlFor="confirm">
               Confirm Password
@@ -122,6 +139,9 @@ export default function Register() {
               autoComplete="new-password"
             />
           </div>
+
+          {error && <p className="text-red-600 text-sm mb-4 text-center">{error}</p>}
+          {success && <p className="text-green-600 text-sm mb-4 text-center">{success}</p>}
 
           <button
             type="submit"

@@ -1,13 +1,16 @@
 "use client";
+
 import Link from "next/link";
 import { useState } from "react";
 import API from "../utils/api"; 
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
+import { useUser } from "@/contexts/UserContext";
 import "@/styles/globals.css"; 
 
 export default function Login() {
   const router = useRouter();
+  const { setUser } = useUser(); 
   const [form, setForm] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
 
@@ -21,11 +24,12 @@ export default function Login() {
 
     try {
       const res = await API.post("/auth/login", form);
-      console.log(res.data);
-      // Lưu trạng thái người dùng ở localStorage hoặc context
+      const plainUser = res.data._doc ?? res.data;
       localStorage.setItem("user", JSON.stringify(res.data.user));
-      Cookies.set("access_token", res.data.access_token, { expires: 7 }); // Lưu token vào cookie
-      router.push("/"); // Chuyển về trang chính sau login
+      Cookies.set("access_token", res.data.access_token, { expires: 7 }); 
+      
+      setUser(plainUser); 
+      router.push("/");
     } catch (err: any) {
       setError(err?.response?.data?.message || "Login failed");
     }
