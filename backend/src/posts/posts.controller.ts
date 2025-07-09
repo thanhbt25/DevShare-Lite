@@ -1,4 +1,4 @@
-import { Controller, Post, Patch, Get, Param, Body, Query } from '@nestjs/common';
+import { Controller, Post, Patch, Get, Param, Body, Query, Delete } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -66,5 +66,10 @@ export class PostsController {
   @Patch(':id/unvote/:userId')
   unvote(@Param('id') postId: string, @Param('userId') userId: string) {
     return this.postsService.unvote(postId, userId);
+  }
+
+  @Delete(':id')
+  async deletePost(@Param('id') id: string) {
+    return this.postsService.deletePost(id);
   }
 }

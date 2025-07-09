@@ -39,7 +39,7 @@ export default function DraftDetailPage() {
     try {
       await axiosInstance.delete(`/posts/${post._id}`);
       alert("Đã xoá bài nháp.");
-      router.push("/review-draft");
+      router.push("/draft/review-draft");
     } catch (err) {
       console.error("Lỗi khi xoá bài viết:", err);
       alert("Không thể xoá bài viết.");

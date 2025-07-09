@@ -145,5 +145,11 @@ export class PostsService {
     };
   }
 
-
+  async deletePost(id: string): Promise<{ message: string }> {
+    const deleted = await this.postModel.findByIdAndDelete(id);
+    if (!deleted) {
+      throw new NotFoundException('Post not found');
+    }
+    return { message: 'Post deleted successfully' };
+  }
 }
