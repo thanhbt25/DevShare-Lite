@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Comment, CommentDocument } from './schemas/comment.schema';
@@ -28,13 +28,23 @@ export class CommentsService {
     return this.commentModel.findByIdAndDelete(id).exec();
   }
 
-  async likeComment(commentId: string, userId: string): Promise<Comment | null> {
-    return this.commentModel.findByIdAndUpdate(
-      commentId,
-      { $addToSet: { likedBy: userId } },
-      { new: true },
-    ).exec();
+  async voteComment(commentId: string, userId: string, isUpvote: boolean): Promise<{ message: string }> {
+    const comment = await this.commentModel.findById(commentId);
+    if (!comment) throw new NotFoundException('Comment not found');
+
+    const userObjectId = new Types.ObjectId(userId);
+    const index = comment.likedBy.findIndex(id => id.toString() === userObjectId.toString());
+
+    if (isUpvote) {
+      if (index === -1) comment.likedBy.push(userObjectId);
+    } else {
+      if (index !== -1) comment.likedBy.splice(index, 1);
+    }
+
+    await comment.save();
+    return { message: isUpvote ? 'Upvoted' : 'Unvoted' };
   }
+
   
   async findByPostId(postId: string): Promise<Comment[]> {
     return this.commentModel

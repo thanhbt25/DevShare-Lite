@@ -32,8 +32,22 @@ export class CommentsController {
     return this.commentsService.delete(id);
   }
 
-  @Post(':id/like/:userId')
-  likeComment(@Param('id') commentId: string, @Param('userId') userId: string) {
-    return this.commentsService.likeComment(commentId, userId);
+  @Post(':commentId/upvote/:userId')
+  async upvoteComment(
+    @Param('commentId') commentId: string,
+    @Param('userId') userId: string,
+  ) {
+    return this.commentsService.voteComment(commentId, userId, true);
   }
+
+  @Patch(':commentId/unvote/:userId')
+  async unvoteComment(
+    @Param('commentId') commentId: string,
+    @Param('userId') userId: string,
+  ) {
+    return this.commentsService.voteComment(commentId, userId, false);
+  }
+
+
+
 }

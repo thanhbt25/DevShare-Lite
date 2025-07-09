@@ -65,10 +65,11 @@ export default function PostDetailPage() {
     }
   }, [id]);
 
-  const enrichComments = async (comments: any[]): Promise<any[]> => {
-    // Lấy tất cả authorId từ comments
+  const enrichComments = async (
+    comments: any[],
+    currentUserId?: string
+  ): Promise<any[]> => {
     const authorIds = comments.map((c) => c.authorId);
-
     const uniqueIds = [
       ...new Set(
         authorIds.map((id: any) => {
@@ -84,17 +85,21 @@ export default function PostDetailPage() {
     const usersRes = await axiosInstance.post("/users/bulk", {
       ids: uniqueIds,
     });
-
     const userMap: Record<string, string> = {};
     usersRes.data.forEach((user: any) => {
       userMap[user.id] = user.username;
     });
 
-    return comments.map((c: any) => ({
-      ...c,
-      authorName: userMap[c.authorId] || "anonymous",
-      upvoteCount: c.likedBy?.length || 0,
-    }));
+    return comments.map((c: any) => {
+      const likedBy = c.likedBy || [];
+      const hasVoted = currentUserId ? likedBy.includes(currentUserId) : false;
+      return {
+        ...c,
+        authorName: userMap[c.authorId] || "anonymous",
+        upvoteCount: likedBy.length,
+        hasVoted,
+      };
+    });
   };
 
   useEffect(() => {
@@ -163,10 +168,17 @@ export default function PostDetailPage() {
     try {
       if (!user) return alert("Cần đăng nhập để vote");
 
-      await axiosInstance.post(`/comments/${commentId}/like/${user._id}`);
+      const comment = comments.find((c) => c._id === commentId);
+      const hasVoted = comment?.likedBy?.includes(user._id); // hoặc comment.hasVoted nếu đã enrich
+
+      if (hasVoted) {
+        await axiosInstance.patch(`/comments/${commentId}/unvote/${user._id}`);
+      } else {
+        await axiosInstance.post(`/comments/${commentId}/upvote/${user._id}`);
+      }
 
       const res = await axiosInstance.get(`/comments/post/${post._id}`);
-      const enriched = await enrichComments(res.data);
+      const enriched = await enrichComments(res.data, user._id);
       setComments(enriched);
     } catch (err) {
       console.error("Vote comment error:", err);
