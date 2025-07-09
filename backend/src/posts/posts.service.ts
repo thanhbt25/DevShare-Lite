@@ -177,5 +177,22 @@ export class PostsService {
         .sort((a, b) => b.score - a.score);
 
       return scored.map((item) => item.post);
+  }
+
+  async getPostsPaginated(page: number, limit: number, isBlog?: boolean) {
+    const skip = (page - 1) * limit;
+
+    const filter: any = { isPublished: true };
+    if (typeof isBlog === "boolean") {
+      filter.isBlog = isBlog;
     }
+
+    const [posts, total] = await Promise.all([
+      this.postModel.find(filter).skip(skip).limit(limit),
+      this.postModel.countDocuments(filter),
+    ]);
+
+    return { posts, total };
+  }
+
 }

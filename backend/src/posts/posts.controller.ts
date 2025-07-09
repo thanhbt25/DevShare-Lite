@@ -12,6 +12,19 @@ export class PostsController {
     return this.postsService.searchPosts(query);
   }
 
+  @Get('/paginated')
+  async getPaginatedPosts(
+    @Query('page') page: string,
+    @Query('limit') limit: string,
+    @Query('isBlog') isBlog: string,
+  ) {
+    const pageNumber = parseInt(page) || 1;
+    const limitNumber = parseInt(limit) || 5;
+    const isBlogFilter = isBlog === 'true' ? true : isBlog === 'false' ? false : undefined;
+
+    return this.postsService.getPostsPaginated(pageNumber, limitNumber, isBlogFilter);
+  }
+
   @Post()
   create(@Body() dto: CreatePostDto) {
     return this.postsService.create(dto);
@@ -77,4 +90,5 @@ export class PostsController {
   async deletePost(@Param('id') id: string) {
     return this.postsService.deletePost(id);
   }
+
 }

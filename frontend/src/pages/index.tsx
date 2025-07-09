@@ -1,46 +1,43 @@
 import Head from "next/head";
-import Footer from "@/components/common/Footer";
-import PostCard from "@/components/index/PostCard";
 import ThreeColumnLayout from "@/components/common/ThreeColumnsLayout";
+import RightSidebar from "@/components/index/RightSidebar";
+import HomeMainContent from "@/components/index/HomeMainContent";
 import { useEffect, useState } from "react";
 import axiosInstance from "@/utils/api";
 import "@/styles/globals.css";
 
-import RightSidebar from "@/components/index/RightSidebar";
-import HomeMainContent from "@/components/index/HomeMainContent";
-
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState<"blog" | "qa">("blog");
-  const [sort, setSort] = useState<"newest" | "popular" | "unanswered">(
-    "newest"
-  );
+  const [sort, setSort] = useState<"newest" | "popular" | "unanswered">("newest");
   const [showFilter, setShowFilter] = useState(false);
 
   const [posts, setPosts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [postsPerPage] = useState(5);
   const [loading, setLoading] = useState(false);
+  const [totalPosts, setTotalPosts] = useState(0);
 
+  // Gọi API mỗi khi activeTab hoặc currentPage thay đổi
   useEffect(() => {
     const fetchPosts = async () => {
       setLoading(true);
       try {
-        const res = await axiosInstance.get("/posts", {
-          params: {
-            page: currentPage,
-            type: activeTab,
-            isPublished: true,
-          },
-        });
+        const isBlog = activeTab === "blog";
+        const res = await axiosInstance.get(
+          `/posts/paginated?page=${currentPage}&limit=${postsPerPage}&isBlog=${isBlog}`
+        );
         setPosts(res.data.posts);
-        setTotalPages(res.data.totalPages);
+        setTotalPosts(res.data.total);
       } catch (err) {
-        console.error("Failed to fetch posts", err);
+        console.error("Error fetching posts:", err);
       }
       setLoading(false);
     };
+
     fetchPosts();
-  }, [currentPage, activeTab]);
+  }, [activeTab, currentPage]);
+
+  const totalPages = Math.max(1, Math.ceil(totalPosts / postsPerPage));
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -51,7 +48,10 @@ export default function HomePage() {
       <ThreeColumnLayout rightSidebar={RightSidebar}>
         <HomeMainContent
           activeTab={activeTab}
-          setActiveTab={setActiveTab}
+          setActiveTab={(tab) => {
+            setActiveTab(tab);
+            setCurrentPage(1); // reset về trang 1 khi đổi tab
+          }}
           sort={sort}
           setSort={setSort}
           showFilter={showFilter}

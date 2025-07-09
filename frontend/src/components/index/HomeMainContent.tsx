@@ -29,6 +29,36 @@ const HomeMainContent: React.FC<Props> = ({
   totalPages,
   setCurrentPage,
 }) => {
+  const computedTotalPages = Math.max(1, totalPages);
+
+  const getPagesToShow = (current: number, total: number) => {
+    const delta = 2;
+    const range: (number | "...")[] = [];
+
+    const left = Math.max(2, current - delta);
+    const right = Math.min(total - 1, current + delta);
+
+    range.push(1);
+
+    if (left > 2) {
+      range.push("...");
+    }
+
+    for (let i = left; i <= right; i++) {
+      range.push(i);
+    }
+
+    if (right < total - 1) {
+      range.push("...");
+    }
+
+    if (total > 1) {
+      range.push(total);
+    }
+
+    return range;
+  };
+
   return (
     <>
       {/* Tabs */}
@@ -127,6 +157,7 @@ const HomeMainContent: React.FC<Props> = ({
 
       {/* Pagination */}
       <div className="mt-6 flex justify-center gap-2">
+        {/* Previous */}
         <button
           className={`text-gray-500 ${
             currentPage === 1 ? "opacity-50 cursor-default" : ""
@@ -136,23 +167,40 @@ const HomeMainContent: React.FC<Props> = ({
         >
           ← Previous
         </button>
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((num) => (
-          <button
-            key={num}
-            onClick={() => setCurrentPage(num)}
-            className={`px-2 py-1 rounded ${
-              currentPage === num ? "font-bold bg-indigo-200" : ""
-            }`}
-          >
-            {num}
-          </button>
-        ))}
+
+        {/* Page numbers */}
+        {getPagesToShow(currentPage, computedTotalPages).map((page, index) =>
+          page === "..." ? (
+            <span
+              key={`ellipsis-${index}`}
+              className="px-2 py-1 text-gray-400 select-none"
+            >
+              ...
+            </span>
+          ) : (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page as number)}
+              className={`px-2 py-1 rounded ${
+                currentPage === page ? "font-bold bg-indigo-200" : ""
+              }`}
+            >
+              {page}
+            </button>
+          )
+        )}
+
+        {/* Next */}
         <button
           className={`text-gray-500 ${
-            currentPage === totalPages ? "opacity-50 cursor-default" : ""
+            currentPage === computedTotalPages
+              ? "opacity-50 cursor-default"
+              : ""
           }`}
-          onClick={() => setCurrentPage(Math.min(currentPage + 1, totalPages))}
-          disabled={currentPage === totalPages}
+          onClick={() =>
+            setCurrentPage(Math.min(currentPage + 1, computedTotalPages))
+          }
+          disabled={currentPage === computedTotalPages}
         >
           Next →
         </button>
