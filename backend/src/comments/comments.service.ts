@@ -43,8 +43,8 @@ export class CommentsService {
   async findByPostId(postId: string): Promise<Comment[]> {
     return this.commentModel
       .find({ postId: new Types.ObjectId(postId) })
-      .populate('author', 'username') // nếu muốn lấy tên người comment
-      .sort({ createdAt: -1 }) // sort theo thời gian mới nhất
+      .populate('author', 'username') 
+      .sort({ createdAt: -1 }) 
       .exec();
-}
+  }
 }

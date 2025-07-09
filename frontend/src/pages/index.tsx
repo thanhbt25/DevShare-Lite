@@ -29,6 +29,7 @@ export default function HomePage() {
           params: {
             page: currentPage,
             type: activeTab,
+            isPublished: true,
           },
         });
         setPosts(res.data.posts);

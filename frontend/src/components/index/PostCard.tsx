@@ -43,7 +43,7 @@ export default function PostCard({ post }: Props) {
 
         <div className="flex-1 flex flex-col justify-between min-w-0">
           <div>
-            <Link href={`/post/${post._id}`}>
+            <Link href={post.isPublished ? `/post/${post._id}` : `/draft/${post._id}`}>
               <h3 className="text-lg font-bold text-blue-800 underline cursor-pointer break-words line-clamp-2">
                 {post.title}
               </h3>

@@ -31,8 +31,15 @@ export class PostsService {
     return post;
   }
 
-  async findByUser(userId: string): Promise<Post[]> {
-    return this.postModel.find({ authorId: userId });
+  async findPostByUser(userId: string): Promise<Post[]> {
+    return this.postModel.find({ authorId: userId, isPublished: true });
+  }
+
+  async findDraftByUser(userId: string): Promise<Post[]> {
+    return this.postModel
+    .find({ authorId: userId, isPublished: false })
+    .sort({ createdAt: -1 }) 
+    .exec();
   }
 
   async findFavoritedByUser(userId: string): Promise<Post[]> {

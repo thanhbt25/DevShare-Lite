@@ -19,7 +19,7 @@ export class PostsController {
 
   @Get('user/:userId')
   findByUser(@Param('userId') userId: string) {
-    return this.postsService.findByUser(userId);
+    return this.postsService.findPostByUser(userId);
   }
 
   @Get('favorites/:userId')

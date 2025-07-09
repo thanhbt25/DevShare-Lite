@@ -52,12 +52,14 @@ export default function PostDetailPage() {
     }
   }, [id, user]);
 
-  // Fetch comment riêng từ bảng comments theo postId
   useEffect(() => {
     if (typeof id === "string") {
       axiosInstance
         .get(`/comments/post/${id}`)
-        .then((res) => setComments(res.data))
+        .then((res) => {
+          console.log("Comments:", res.data); 
+          setComments(res.data);
+        })
         .catch((err) => console.error("Comment fetch error:", err));
     }
   }, [id]);
