@@ -57,12 +57,90 @@ export default function PostDetailPage() {
       axiosInstance
         .get(`/comments/post/${id}`)
         .then((res) => {
-          console.log("Comments:", res.data); 
+          console.log("Comments:", res.data);
           setComments(res.data);
         })
         .catch((err) => console.error("Comment fetch error:", err));
     }
   }, [id]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (typeof id !== "string") return;
+
+      try {
+        const [postRes, commentRes] = await Promise.all([
+          axiosInstance.get(`/posts/${id}`),
+          axiosInstance.get(`/comments/post/${id}`),
+        ]);
+
+        const postData = postRes.data;
+        const commentData = commentRes.data;
+
+        // Gộp tất cả authorId từ post + comment
+        const authorIds = [
+          postData.authorId,
+          ...commentData.map((c: any) => c.authorId),
+        ];
+
+        const uniqueIds = [
+          ...new Set(
+            authorIds.map((id: any) => {
+              if (typeof id === "string") return id;
+              if (typeof id === "object" && id !== null) {
+                return id._id?.toString?.() || id.id?.toString?.() || "";
+              }
+              return "";
+            })
+          ),
+        ].filter(Boolean);
+
+        console.log(uniqueIds);
+
+        const usersRes = await axiosInstance.post("/users/bulk", {
+          ids: uniqueIds,
+        });
+
+        const userMap: Record<string, string> = {};
+        usersRes.data.forEach((user: any) => {
+          userMap[user.id] = user.username;
+        });
+
+        setPost({
+          ...postData,
+          authorName: userMap[postData.authorId] || "anonymous",
+        });
+
+        const enrichedComments = commentData.map((c: any) => ({
+          ...c,
+          authorName: userMap[c.authorId] || "anonymous",
+          upvoteCount: c.likedBy?.length || 0,
+        }));
+
+        setComments(enrichedComments);
+      } catch (err) {
+        console.error("Error fetching post or comments:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id, user]);
+
+  const onCommentVote = async (commentId: string) => {
+    try {
+      if (!user) return alert("Cần đăng nhập để vote");
+
+      const path = `/comments/${commentId}/like/${user._id}`;
+      await axiosInstance.post(path);
+
+      const res = await axiosInstance.get(`/comments/post/${post._id}`);
+      setComments(res.data);
+    } catch (err) {
+      console.error("Vote comment error:", err);
+    }
+  };
 
   const handleFavorite = async () => {
     if (!post || !user) return alert("Bạn cần đăng nhập để lưu bài viết");
@@ -144,6 +222,7 @@ export default function PostDetailPage() {
           downvoteCount={post?.votes?.down || 0}
           saveCount={post?.favorites?.length || 0}
           comments={comments}
+          onCommentVote={onCommentVote}
         />
       </ThreeColumnLayout>
     </div>

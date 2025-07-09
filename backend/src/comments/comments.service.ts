@@ -16,6 +16,10 @@ export class CommentsService {
     return comment.save();
   }
 
+  async findAll(): Promise<Comment[]> {
+    return this.commentModel.find().exec();
+  }
+
   async update(id: string, dto: UpdateCommentDto): Promise<Comment | null> {
     return this.commentModel.findByIdAndUpdate(id, dto, { new: true }).exec();
   }
@@ -31,19 +35,10 @@ export class CommentsService {
       { new: true },
     ).exec();
   }
-
-  async unlikeComment(commentId: string, userId: string): Promise<Comment | null> {
-    return this.commentModel.findByIdAndUpdate(
-      commentId,
-      { $pull: { likedBy: userId } },
-      { new: true },
-    ).exec();
-  }
   
   async findByPostId(postId: string): Promise<Comment[]> {
     return this.commentModel
-      .find({ postId: new Types.ObjectId(postId) })
-      .populate('author', 'username') 
+      .find({ postId })
       .sort({ createdAt: -1 }) 
       .exec();
   }

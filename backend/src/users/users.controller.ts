@@ -36,6 +36,7 @@ export class UsersController {
 
   @Post('bulk')
   async getUsersByIds(@Body() body: { ids: string[] }) {
+    console.log("Bulk user lookup: ", body.ids);
     return this.usersService.findManyByIds(body.ids);
   }
 }

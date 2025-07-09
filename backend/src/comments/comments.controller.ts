@@ -7,6 +7,16 @@ import { UpdateCommentDto } from './dto/update-comment.dto';
 export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
+  @Get('/')
+  getAllComments() {
+    return this.commentsService.findAll();
+  }
+
+  @Get('post/:postId')
+  getCommentsByPost(@Param('postId') postId: string) {
+    return this.commentsService.findByPostId(postId);
+  }
+
   @Post()
   create(@Body() dto: CreateCommentDto) {
     return this.commentsService.create(dto);
@@ -25,15 +35,5 @@ export class CommentsController {
   @Post(':id/like/:userId')
   likeComment(@Param('id') commentId: string, @Param('userId') userId: string) {
     return this.commentsService.likeComment(commentId, userId);
-  }
-
-  @Post(':id/unlike/:userId')
-  unlikeComment(@Param('id') commentId: string, @Param('userId') userId: string) {
-    return this.commentsService.unlikeComment(commentId, userId);
-  }
-
-  @Get('post/:postId')
-  getCommentsByPost(@Param('postId') postId: string) {
-    return this.commentsService.findByPostId(postId);
   }
 }
