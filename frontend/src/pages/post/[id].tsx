@@ -25,6 +25,7 @@ export default function PostDetailPage() {
   // Debug context user
   useEffect(() => {
     console.log("👤 Current user from context:", user);
+    console.log("user id: ", user?._id);
   }, [user]);
 
   // Fetch bài viết
@@ -64,6 +65,38 @@ export default function PostDetailPage() {
     }
   }, [id]);
 
+  const enrichComments = async (comments: any[]): Promise<any[]> => {
+    // Lấy tất cả authorId từ comments
+    const authorIds = comments.map((c) => c.authorId);
+
+    const uniqueIds = [
+      ...new Set(
+        authorIds.map((id: any) => {
+          if (typeof id === "string") return id;
+          if (typeof id === "object" && id !== null) {
+            return id._id?.toString?.() || id.id?.toString?.() || "";
+          }
+          return "";
+        })
+      ),
+    ].filter(Boolean);
+
+    const usersRes = await axiosInstance.post("/users/bulk", {
+      ids: uniqueIds,
+    });
+
+    const userMap: Record<string, string> = {};
+    usersRes.data.forEach((user: any) => {
+      userMap[user.id] = user.username;
+    });
+
+    return comments.map((c: any) => ({
+      ...c,
+      authorName: userMap[c.authorId] || "anonymous",
+      upvoteCount: c.likedBy?.length || 0,
+    }));
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       if (typeof id !== "string") return;
@@ -94,8 +127,6 @@ export default function PostDetailPage() {
             })
           ),
         ].filter(Boolean);
-
-        console.log(uniqueIds);
 
         const usersRes = await axiosInstance.post("/users/bulk", {
           ids: uniqueIds,
@@ -132,11 +163,11 @@ export default function PostDetailPage() {
     try {
       if (!user) return alert("Cần đăng nhập để vote");
 
-      const path = `/comments/${commentId}/like/${user._id}`;
-      await axiosInstance.post(path);
+      await axiosInstance.post(`/comments/${commentId}/like/${user._id}`);
 
       const res = await axiosInstance.get(`/comments/post/${post._id}`);
-      setComments(res.data);
+      const enriched = await enrichComments(res.data);
+      setComments(enriched);
     } catch (err) {
       console.error("Vote comment error:", err);
     }
@@ -195,7 +226,8 @@ export default function PostDetailPage() {
       setComment("");
 
       const res = await axiosInstance.get(`/comments/post/${post._id}`);
-      setComments(res.data);
+      const enriched = await enrichComments(res.data);
+      setComments(enriched);
     } catch (err) {
       console.error("Comment error:", err);
     }
