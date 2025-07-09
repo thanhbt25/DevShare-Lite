@@ -33,4 +33,9 @@ export class UsersController {
   async findByUsername(@Param('username') username: string) {
     return this.usersService.findByUsername(username);
   }
+
+  @Post('bulk')
+  async getUsersByIds(@Body() body: { ids: string[] }) {
+    return this.usersService.findManyByIds(body.ids);
+  }
 }

@@ -44,4 +44,8 @@ export class UsersService {
     console.log("updated user is", updated);
     return updated ? updated?.toObject() : null;
   }
+
+  async findManyByIds(ids: string[]): Promise<User[]> {
+    return this.userModel.find({ _id: { $in: ids } }).select('username');
+  }
 }

@@ -12,13 +12,13 @@ export default function Sidebar() {
         <FiHome /> Home
       </Link>
       <Link
-        href="#"
+        href="/your-post/review"
         className="flex items-center gap-2 px-3 py-2 rounded hover:bg-indigo-100 font-medium text-indigo-700"
       >
         <FiHelpCircle /> Your Questions
       </Link>
       <Link
-        href="/draft/review-draft"
+        href="/draft/review"
         className="flex items-center gap-2 px-3 py-2 rounded hover:bg-indigo-100 font-medium text-indigo-700"
       >
         <RiDraftLine /> Draft
