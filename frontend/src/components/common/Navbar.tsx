@@ -5,11 +5,21 @@ import { FiPlusSquare, FiBell, FiSearch } from "react-icons/fi";
 import { useState, useEffect, useRef } from "react";
 import Cookies from "js-cookie";
 import { useUser } from "@/contexts/UserContext";
+import { useRouter } from "next/router";
 
 export default function Navbar() {
   const { user, setUser } = useUser(); // Sử dụng context
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const router = useRouter();
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchTerm.trim()) return;
+    router.push(`/find?q=${encodeURIComponent(searchTerm.trim())}`);
+  };
 
   // Ẩn dropdown khi click ra ngoài
   useEffect(() => {
@@ -45,16 +55,21 @@ export default function Navbar() {
 
       {/* Search center */}
       <div className="flex-1 flex justify-center">
-        <div className="relative w-full max-w-xl">
+        <form onSubmit={handleSearch} className="relative w-full max-w-xl">
           <input
             type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search DevShare Lite"
             className="w-full pl-4 pr-10 py-2 rounded-full text-black"
           />
-          <button className="absolute right-2 top-1/2 -translate-y-1/2 text-black hover:text-indigo-600">
+          <button
+            type="submit"
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-black hover:text-indigo-600"
+          >
             <FiSearch size={22} />
           </button>
-        </div>
+        </form>
       </div>
 
       {/* Actions */}

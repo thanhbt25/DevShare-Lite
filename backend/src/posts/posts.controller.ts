@@ -7,6 +7,11 @@ import { UpdatePostDto } from './dto/update-post.dto';
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
+  @Get('/search')
+  async searchPosts(@Query('q') query: string) {
+    return this.postsService.searchPosts(query);
+  }
+
   @Post()
   create(@Body() dto: CreatePostDto) {
     return this.postsService.create(dto);

@@ -152,4 +152,30 @@ export class PostsService {
     }
     return { message: 'Post deleted successfully' };
   }
+
+  async searchPosts(query: string): Promise<any[]> {
+    if (!query || query.trim() === '') return [];
+
+    const keyword = query.toLowerCase();
+
+    // Lấy các bài post có chứa từ khóa trong title hoặc content
+    const posts = await this.postModel.find({
+      isPublished: true,
+      $or: [
+        { title: { $regex: keyword, $options: 'i' } },
+        { content: { $regex: keyword, $options: 'i' } },
+      ],
+    });
+
+    const scored = posts
+        .map((post) => {
+          const titleCount = (post.title.toLowerCase().match(new RegExp(keyword, 'g')) || []).length;
+          const contentCount = (post.content.toLowerCase().match(new RegExp(keyword, 'g')) || []).length;
+          const score = titleCount * 3 + contentCount; // Ưu tiên title hơn
+          return { post, score };
+        })
+        .sort((a, b) => b.score - a.score);
+
+      return scored.map((item) => item.post);
+    }
 }
