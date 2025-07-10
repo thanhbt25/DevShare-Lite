@@ -21,6 +21,16 @@ export default function PostDetailPage() {
   const [voted, setVoted] = useState<"upvoted" | "downvoted" | null>(null);
   const [comment, setComment] = useState("");
   const [comments, setComments] = useState<any[]>([]); // Lưu danh sách comment riêng
+  const [replyMap, setReplyMap] = useState<{ [key: string]: string }>({});
+
+  type CommentType = {
+    _id: string;
+    content: string;
+    authorName: string;
+    createdAt: string;
+    upvoteCount: number;
+    parentId?: string | null;
+  };
 
   // Debug context user
   useEffect(() => {
@@ -28,42 +38,28 @@ export default function PostDetailPage() {
     console.log("user id: ", user?._id);
   }, [user]);
 
-  // Fetch bài viết
-  // useEffect(() => {
-  //   if (typeof id === "string") {
-  //     axiosInstance.post(`/posts/${id}/view`);
+  const onReplySubmit = async (parentId: string, content: string) => {
+    if (!user || !post) return alert("Bạn cần đăng nhập để phản hồi");
+    if (!content) return;
+    console.log('content is: ', content, 'parent id: ',  parentId);
 
-  //     axiosInstance
-  //       .get(`/posts/${id}`)
-  //       .then((res) => {
-  //         const data = res.data;
-  //         setPost(data);
+    try {
+      await axiosInstance.post(`/comments`, {
+        content,
+        authorId: user._id,
+        postId: post._id,
+        parentId, 
+      });
 
-  //         if (user) {
-  //           setFavorited(data.favoritedBy?.includes(user._id));
-  //           if (data.votedUpUsers?.includes(user._id)) setVoted("upvoted");
-  //           else if (data.votedDownUsers?.includes(user._id))
-  //             setVoted("downvoted");
-  //           else setVoted(null);
-  //         }
+      setReplyMap((prev) => ({ ...prev, [parentId]: "" }));
 
-  //         setLoading(false);
-  //       })
-  //       .catch(() => setLoading(false));
-  //   }
-  // }, [id, user]);
-
-  // useEffect(() => {
-  //   if (typeof id === "string") {
-  //     axiosInstance
-  //       .get(`/comments/post/${id}`)
-  //       .then((res) => {
-  //         console.log("Comments:", res.data);
-  //         setComments(res.data);
-  //       })
-  //       .catch((err) => console.error("Comment fetch error:", err));
-  //   }
-  // }, [id]);
+      const res = await axiosInstance.get(`/comments/post/${post._id}`);
+      const enriched = await enrichComments(res.data, user._id);
+      setComments(enriched);
+    } catch (err) {
+      console.error("Reply comment error:", err);
+    }
+  };
 
   const enrichComments = async (
     comments: any[],
@@ -283,6 +279,7 @@ export default function PostDetailPage() {
           handleCommentSubmit={handleCommentSubmit}
           comments={comments}
           onCommentVote={onCommentVote}
+          onReplySubmit={onReplySubmit}
         />
       </ThreeColumnLayout>
     </div>

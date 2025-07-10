@@ -14,6 +14,9 @@ export class Comment {
 
   @Prop({ type: [Types.ObjectId], ref: 'User', default: [] })
   likedBy: Types.ObjectId[];
+
+  @Prop({ type: Types.ObjectId, ref: 'Comment', default: null })
+  parentId: Types.ObjectId | null;
 }
 
 export type CommentDocument = Comment & Document;

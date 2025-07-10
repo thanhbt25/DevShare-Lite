@@ -4,14 +4,6 @@ import PostContent from "./PostContent";
 import CommentEditor from "./CommentEditor";
 import CommentList from "./CommentList";
 
-type CommentType = {
-  _id: string;
-  content: string;
-  authorName: string;
-  createdAt: string;
-  upvoteCount: number;
-};
-
 type Props = {
   post: any;
   loading: boolean;
@@ -24,6 +16,16 @@ type Props = {
   handleCommentSubmit: () => void;
   comments: CommentType[];
   onCommentVote: (commentId: string) => void;
+  onReplySubmit: (parentId: string, content: string) => void;
+};
+
+type CommentType = {
+  _id: string;
+  content: string;
+  authorName: string;
+  createdAt: string;
+  upvoteCount: number;
+  parentId?: string | null;
 };
 
 const PostMainContent: React.FC<Props> = ({
@@ -38,6 +40,7 @@ const PostMainContent: React.FC<Props> = ({
   handleCommentSubmit,
   comments,
   onCommentVote,
+  onReplySubmit,
 }) => {
   return (
     <div className="flex gap-6 items-start">
@@ -57,7 +60,11 @@ const PostMainContent: React.FC<Props> = ({
           handleCommentSubmit={handleCommentSubmit}
         />
 
-        <CommentList comments={comments} onCommentVote={onCommentVote} />
+        <CommentList
+          comments={comments}
+          onCommentVote={onCommentVote}
+          onReplySubmit={onReplySubmit}
+        />
       </div>
     </div>
   );
