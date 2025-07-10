@@ -272,9 +272,6 @@ export default function PostDetailPage() {
           handleVote={handleVote}
           handleFavorite={handleFavorite}
           handleCommentSubmit={handleCommentSubmit}
-          upvoteCount={post?.votes?.up || 0}
-          downvoteCount={post?.votes?.down || 0}
-          saveCount={post?.favorites?.length || 0}
           comments={comments}
           onCommentVote={onCommentVote}
         />

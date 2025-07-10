@@ -17,12 +17,13 @@ export class PostsController {
     @Query('page') page: string,
     @Query('limit') limit: string,
     @Query('isBlog') isBlog: string,
+    @Query('sort') sort: string,
   ) {
     const pageNumber = parseInt(page) || 1;
     const limitNumber = parseInt(limit) || 5;
     const isBlogFilter = isBlog === 'true' ? true : isBlog === 'false' ? false : undefined;
 
-    return this.postsService.getPostsPaginated(pageNumber, limitNumber, isBlogFilter);
+    return this.postsService.getPostsPaginated(pageNumber, limitNumber, isBlogFilter, sort);
   }
 
   @Post()

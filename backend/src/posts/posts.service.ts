@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model, PipelineStage, Types } from 'mongoose';
 import { Post, PostDocument } from './schemas/post.schema';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
@@ -179,20 +179,64 @@ export class PostsService {
       return scored.map((item) => item.post);
   }
 
-  async getPostsPaginated(page: number, limit: number, isBlog?: boolean) {
+  async getPostsPaginated(
+    page: number,
+    limit: number,
+    isBlog?: boolean,
+    sort?: string,
+  ) {
     const skip = (page - 1) * limit;
-
     const filter: any = { isPublished: true };
+
     if (typeof isBlog === "boolean") {
       filter.isBlog = isBlog;
     }
 
+    // Nếu là sort=unanswered thì thêm điều kiện
+    if (sort === "unanswered") {
+      filter.commentCount = 0;
+    }
+
+    // Nếu là sort theo voted, thì dùng pipeline
+    if (sort === "voted") {
+      const pipeline: PipelineStage[] = [
+        { $match: filter },
+        {
+          $addFields: {
+            voteScore: {
+              $subtract: [
+                { $ifNull: ["$upvotes", 0] },
+                { $ifNull: ["$downvotes", 0] },
+              ],
+            },
+          },
+        },
+        { $sort: { voteScore: -1 as -1 } },
+        { $skip: skip },
+        { $limit: limit },
+      ];
+
+      const posts = await this.postModel.aggregate(pipeline);
+      const total = await this.postModel.countDocuments(filter);
+      return { posts, total };
+    }
+
+    // Các sort còn lại (newest, popular...)
+    let sortCondition: any = { createdAt: -1 }; // default
+
+    if (sort === "popular") {
+      sortCondition = { views: -1 };
+    } else if (sort === "newest") {
+      sortCondition = { createdAt: -1 };
+    }
+
     const [posts, total] = await Promise.all([
-      this.postModel.find(filter).skip(skip).limit(limit),
+      this.postModel.find(filter).sort(sortCondition).skip(skip).limit(limit),
       this.postModel.countDocuments(filter),
     ]);
 
     return { posts, total };
   }
+
 
 }

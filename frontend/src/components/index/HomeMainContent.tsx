@@ -5,8 +5,8 @@ import { FiFilter } from "react-icons/fi";
 type Props = {
   activeTab: "blog" | "qa";
   setActiveTab: (tab: "blog" | "qa") => void;
-  sort: "newest" | "popular" | "unanswered";
-  setSort: (sort: "newest" | "popular" | "unanswered") => void;
+  sort: "newest" | "popular" | "unanswered" | "voted";
+  setSort: (sort: "newest" | "popular" | "unanswered" | "voted") => void;
   showFilter: boolean;
   setShowFilter: (val: boolean) => void;
   posts: any[];
@@ -59,48 +59,50 @@ const HomeMainContent: React.FC<Props> = ({
     return range;
   };
 
+  const sortOptions: { label: string; value: Props["sort"] }[] = [
+    { label: "Newest", value: "newest" },
+    { label: "Popular", value: "popular" },
+    { label: "Unanswered", value: "unanswered" },
+    { label: "Voted", value: "voted" },
+  ];
+
   return (
     <>
       {/* Tabs */}
       <div className="flex space-x-4 border-b pb-2 mb-4">
-        <button
-          onClick={() => {
-            setActiveTab("blog");
-            setCurrentPage(1);
-          }}
-          className={`font-medium ${
-            activeTab === "blog" ? "border-b-2 border-black" : "text-gray-400"
-          }`}
-        >
-          Blog
-        </button>
-        <button
-          onClick={() => {
-            setActiveTab("qa");
-            setCurrentPage(1);
-          }}
-          className={`font-medium ${
-            activeTab === "qa" ? "border-b-2 border-black" : "text-gray-400"
-          }`}
-        >
-          Q&A
-        </button>
+        {["blog", "qa"].map((tab) => (
+          <button
+            key={tab}
+            onClick={() => {
+              setActiveTab(tab as "blog" | "qa");
+              setCurrentPage(1);
+            }}
+            className={`font-medium ${
+              activeTab === tab ? "border-b-2 border-black" : "text-gray-400"
+            }`}
+          >
+            {tab.toUpperCase()}
+          </button>
+        ))}
       </div>
 
       {/* Sort options */}
       <div className="flex justify-between items-center mb-4">
-        <div>
-          {["newest", "popular", "unanswered"].map((s) => (
+        <div className="flex gap-2 flex-wrap">
+          {sortOptions.map((option) => (
             <button
-              key={s}
-              className={`px-3 py-1 text-sm font-medium rounded ${
-                sort === s
+              key={option.value}
+              className={`px-3 py-1 text-sm font-medium rounded transition ${
+                sort === option.value
                   ? "bg-indigo-600 text-white"
-                  : "text-gray-400 hover:bg-indigo-100"
+                  : "text-gray-500 hover:bg-indigo-100"
               }`}
-              onClick={() => setSort(s as any)}
+              onClick={() => {
+                setSort(option.value);
+                setCurrentPage(1); // reset page khi đổi sort
+              }}
             >
-              {s.charAt(0).toUpperCase() + s.slice(1)}
+              {option.label}
             </button>
           ))}
         </div>
@@ -156,8 +158,7 @@ const HomeMainContent: React.FC<Props> = ({
       )}
 
       {/* Pagination */}
-      <div className="mt-6 flex justify-center gap-2">
-        {/* Previous */}
+      <div className="mt-6 flex justify-center gap-2 flex-wrap">
         <button
           className={`text-gray-500 ${
             currentPage === 1 ? "opacity-50 cursor-default" : ""
@@ -168,7 +169,6 @@ const HomeMainContent: React.FC<Props> = ({
           ← Previous
         </button>
 
-        {/* Page numbers */}
         {getPagesToShow(currentPage, computedTotalPages).map((page, index) =>
           page === "..." ? (
             <span
@@ -190,7 +190,6 @@ const HomeMainContent: React.FC<Props> = ({
           )
         )}
 
-        {/* Next */}
         <button
           className={`text-gray-500 ${
             currentPage === computedTotalPages
