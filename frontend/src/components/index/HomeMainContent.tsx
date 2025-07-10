@@ -7,8 +7,6 @@ type Props = {
   setActiveTab: (tab: "blog" | "qa") => void;
   sort: "newest" | "popular" | "unanswered" | "voted";
   setSort: (sort: "newest" | "popular" | "unanswered" | "voted") => void;
-  showFilter: boolean;
-  setShowFilter: (val: boolean) => void;
   posts: any[];
   loading: boolean;
   currentPage: number;
@@ -21,8 +19,6 @@ const HomeMainContent: React.FC<Props> = ({
   setActiveTab,
   sort,
   setSort,
-  showFilter,
-  setShowFilter,
   posts,
   loading,
   currentPage,
@@ -106,47 +102,7 @@ const HomeMainContent: React.FC<Props> = ({
             </button>
           ))}
         </div>
-        <button
-          className="flex items-center gap-1 bg-gray-200 px-3 py-1 rounded hover:bg-indigo-100"
-          onClick={() => setShowFilter(!showFilter)}
-        >
-          <FiFilter /> Filter
-        </button>
       </div>
-
-      {/* Filter popup */}
-      {showFilter && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg p-6 min-w-[300px] shadow-lg relative">
-            <button
-              className="absolute top-2 right-3 text-gray-400 hover:text-gray-700 text-xl"
-              onClick={() => setShowFilter(false)}
-            >
-              ×
-            </button>
-            <h3 className="text-lg font-bold mb-4 text-indigo-700">
-              Filter Options
-            </h3>
-            <div className="mb-3">
-              <label className="block mb-1 text-sm font-medium">Tag</label>
-              <input
-                className="w-full border rounded px-2 py-1"
-                placeholder="Enter tag..."
-              />
-            </div>
-            <div className="mb-3">
-              <label className="block mb-1 text-sm font-medium">User</label>
-              <input
-                className="w-full border rounded px-2 py-1"
-                placeholder="Enter username..."
-              />
-            </div>
-            <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded mt-2">
-              Apply Filter
-            </button>
-          </div>
-        </div>
-      )}
 
       {/* Post cards */}
       {loading ? (
