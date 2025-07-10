@@ -268,6 +268,9 @@ export class PostsService {
   }
 
   async findTopContributors(limit = 5) {
+    const orphanPosts = await this.postModel.find({ authorId: null });
+    console.log(orphanPosts);
+
     const results = await this.postModel.aggregate([
       {
         $match: {
@@ -281,7 +284,7 @@ export class PostsService {
           postCount: { $sum: 1 },
         },
       },
-      { $sort: { postCount: -1 } },
+      { $sort: { postCount: -1, _id: -1 } }, // nếu = post thì xếp theo id 
       { $limit: limit },
       {
         $project: {
