@@ -238,5 +238,49 @@ export class PostsService {
     return { posts, total };
   }
 
+  async findTopContributors(limit = 5) {
+    const results = await this.postModel.aggregate([
+      {
+        $match: {
+          isPublished: true,
+          authorId: { $ne: null }, // loại bài không có tác giả
+        },
+      },
+      {
+        $group: {
+          _id: "$authorId", // gom theo authorId
+          postCount: { $sum: 1 },
+        },
+      },
+      { $sort: { postCount: -1 } },
+      { $limit: limit },
+      {
+        $project: {
+          authorId: "$_id",
+          postCount: 1,
+          _id: 0, // bỏ _id gốc
+        },
+      },
+    ]);
 
+    return results; // [{ authorId, postCount }]
+  }
+
+  async getMostPopularTags(limit = 10): Promise<string[]> {
+    const results = await this.postModel.aggregate([
+      { $match: { isPublished: true } },
+      { $unwind: "$tags" },
+      {
+        $group: {
+          _id: "$tags",
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { count: -1 } },
+      { $limit: limit },
+      { $project: { _id: 0, tag: "$_id" } }
+    ]);
+
+    return results.map((r) => r.tag);
+  }
 }

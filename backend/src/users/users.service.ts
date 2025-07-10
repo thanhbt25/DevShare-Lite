@@ -46,7 +46,7 @@ export class UsersService {
   }
 
   async findManyByIds(ids: string[]): Promise<User[]> {
-    return this.userModel.find({ _id: { $in: ids } }).select('username');
+    return this.userModel.find({ _id: { $in: ids } }).select('username avatar');
   }
 
   async addFavorite(userId: string, postId: string) {

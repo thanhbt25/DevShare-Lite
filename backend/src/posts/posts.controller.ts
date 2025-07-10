@@ -26,6 +26,16 @@ export class PostsController {
     return this.postsService.getPostsPaginated(pageNumber, limitNumber, isBlogFilter, sort);
   }
 
+  @Get("trending")
+  async getTrendingTags() {
+    return this.postsService.getMostPopularTags(); 
+  }
+
+  @Get("top-contributors-id")
+  async getTopContributors() {
+    return this.postsService.findTopContributors(); 
+  }
+
   @Post()
   create(@Body() dto: CreatePostDto) {
     return this.postsService.create(dto);
