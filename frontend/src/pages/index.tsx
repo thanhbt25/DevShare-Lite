@@ -46,7 +46,7 @@ export default function HomePage() {
         <title>DevShare Lite - Home</title>
       </Head>
 
-      <ThreeColumnLayout rightSidebar={RightSidebar}>
+      <ThreeColumnLayout rightSidebar={<RightSidebar />}>
         <HomeMainContent
           activeTab={activeTab}
           setActiveTab={(tab) => {
@@ -58,8 +58,6 @@ export default function HomePage() {
             setSort(s);
             setCurrentPage(1); // reset về page 1 khi đổi sort
           }}
-          showFilter={showFilter}
-          setShowFilter={setShowFilter}
           posts={posts}
           loading={loading}
           currentPage={currentPage}
