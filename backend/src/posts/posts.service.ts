@@ -156,28 +156,57 @@ export class PostsService {
   async searchPosts(query: string): Promise<any[]> {
     if (!query || query.trim() === '') return [];
 
-    const keyword = query.toLowerCase();
+    // Escape các ký tự đặc biệt trong regex
+    const escapeRegex = (str: string) =>
+      str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-    // Lấy các bài post có chứa từ khóa trong title hoặc content
+    // Tách câu truy vấn thành các từ khóa riêng biệt
+    const keywords = query
+      .trim()
+      .toLowerCase()
+      .split(/\s+/)
+      .map(escapeRegex);
+
+    // Tạo mảng regex với word boundary (\b)
+    const regexList = keywords.map(
+      word => new RegExp(`\\b${word}\\b`, 'i')
+    );
+
+    // Tạo điều kiện tìm kiếm $or
+    const orConditions = regexList.flatMap(regex => [
+      { title: { $regex: regex } },
+      { content: { $regex: regex } },
+    ]);
+
+    // Lấy các bài post phù hợp
     const posts = await this.postModel.find({
       isPublished: true,
-      $or: [
-        { title: { $regex: keyword, $options: 'i' } },
-        { content: { $regex: keyword, $options: 'i' } },
-      ],
+      $or: orConditions,
     });
 
+    // Tính score và sắp xếp
     const scored = posts
-        .map((post) => {
-          const titleCount = (post.title.toLowerCase().match(new RegExp(keyword, 'g')) || []).length;
-          const contentCount = (post.content.toLowerCase().match(new RegExp(keyword, 'g')) || []).length;
-          const score = titleCount * 3 + contentCount; // Ưu tiên title hơn
-          return { post, score };
-        })
-        .sort((a, b) => b.score - a.score);
+      .map((post) => {
+        const titleText = post.title.toLowerCase();
+        const contentText = post.content.toLowerCase();
 
-      return scored.map((item) => item.post);
+        let titleCount = 0;
+        let contentCount = 0;
+
+        for (const word of keywords) {
+          const wordRegex = new RegExp(`\\b${word}\\b`, 'g');
+          titleCount += (titleText.match(wordRegex) || []).length;
+          contentCount += (contentText.match(wordRegex) || []).length;
+        }
+
+        const score = titleCount * 3 + contentCount; // Ưu tiên title (*3)
+        return { post, score };
+      })
+      .sort((a, b) => b.score - a.score);
+
+    return scored.map(item => item.post);
   }
+
 
   async getPostsPaginated(
     page: number,
