@@ -13,7 +13,7 @@ import PostMainContent from "@/components/post_id/MainContent";
 export default function PostDetailPage() {
   const router = useRouter();
   const { id } = router.query;
-  const { user } = useUser();
+  const { user, setUser } = useUser();
 
   const [post, setPost] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -197,14 +197,23 @@ export default function PostDetailPage() {
 
   const handleFavorite = async () => {
     if (!post || !user) return alert("Bạn cần đăng nhập để lưu bài viết");
+
+    console.log("📌 post._id:", post._id);
+    console.log("📌 user._id:", user._id);
+
     try {
       if (favorited) {
         await axiosInstance.post(`/posts/${post._id}/unfavorite/${user._id}`);
+        await axiosInstance.post(`/users/${user._id}/unfavorite/${post._id}`);
         setFavorited(false);
       } else {
         await axiosInstance.post(`/posts/${post._id}/favorite/${user._id}`);
+        await axiosInstance.post(`/users/${user._id}/favorite/${post._id}`);
         setFavorited(true);
       }
+
+      const userRes = await axiosInstance.get(`/users/${user._id}`);
+      setUser(userRes.data);
 
       const res = await axiosInstance.get(`/posts/${post._id}`);
       setPost(res.data);

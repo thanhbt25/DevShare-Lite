@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
 import * as bcrypt from 'bcryptjs'; 
 
@@ -17,7 +17,7 @@ export class UsersService {
     return this.userModel.find().exec();
   }
   async findById(id: string): Promise<User | null> {
-    return this.userModel.findById(id).exec();
+    return this.userModel.findById(id).lean();
   }
 
   async findByUsername(username: string): Promise<User | null> {
@@ -47,5 +47,33 @@ export class UsersService {
 
   async findManyByIds(ids: string[]): Promise<User[]> {
     return this.userModel.find({ _id: { $in: ids } }).select('username');
+  }
+
+  async addFavorite(userId: string, postId: string) {
+    // console.log("user id: ", userId, "post id: ", postId);
+    return this.userModel.findByIdAndUpdate(
+      new Types.ObjectId(userId),
+      { $addToSet: { favorites: new Types.ObjectId(postId) } },
+      { new: true }
+    );
+  }
+
+  async removeFavorite(userId: string, postId: string) {
+    return this.userModel.findByIdAndUpdate(
+      new Types.ObjectId(userId),
+      { $pull: { favorites: new Types.ObjectId(postId) } },
+      { new: true }
+    );
+  }
+
+  async getFavorite(userId: string) {
+    const user = await this.userModel.findById(userId)
+      .populate({
+        path: 'favorites',
+        options: { sort: {createdAt: -1} },
+      })
+      .select('favorites')
+      .lean();
+    return user?.favorites || [];
   }
 }

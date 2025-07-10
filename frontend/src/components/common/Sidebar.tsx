@@ -23,24 +23,24 @@ export default function Sidebar() {
       >
         <RiDraftLine /> Draft
       </Link>
-      <Link
+      {/* <Link
         href="#"
         className="flex items-center gap-2 px-3 py-2 rounded hover:bg-indigo-100 font-medium text-indigo-700"
       >
         <FiTag /> Tags
-      </Link>
+      </Link> */}
       <Link
-        href="#"
+        href="/favorites"
         className="flex items-center gap-2 px-3 py-2 rounded hover:bg-indigo-100 font-medium text-indigo-700"
       >
         <FiHeart /> Favorites
       </Link>
-      <Link
+      {/* <Link
         href="#"
         className="flex items-center gap-2 px-3 py-2 rounded hover:bg-indigo-100 font-medium text-indigo-700"
       >
         <FiUser /> User
-      </Link>
+      </Link> */}
     </nav>
   );
 }

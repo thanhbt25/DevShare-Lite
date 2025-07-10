@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Patch, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Body, Delete } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './schemas/user.schema';
 
@@ -38,5 +38,20 @@ export class UsersController {
   async getUsersByIds(@Body() body: { ids: string[] }) {
     console.log("Bulk user lookup: ", body.ids);
     return this.usersService.findManyByIds(body.ids);
+  }
+
+  @Post(":userId/favorite/:postId")
+  async addFavorite(@Param("userId") userId: string, @Param("postId") postId: string) {
+    return this.usersService.addFavorite(userId, postId);
+  }
+
+  @Post(":userId/unfavorite/:postId")
+  async removeFavorite(@Param("userId") userId: string, @Param("postId") postId: string) {
+    return this.usersService.removeFavorite(userId, postId);
+  }
+
+  @Get(":userId/favorite")
+  async getFavorite(@Param("userId") userId: string) {
+    return this.usersService.getFavorite(userId);
   }
 }
