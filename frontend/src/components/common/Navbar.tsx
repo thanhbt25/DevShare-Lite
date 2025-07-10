@@ -79,7 +79,7 @@ export default function Navbar() {
             <Link href="/create-post" aria-label="Add Post">
               <FiPlusSquare size={28} className="hover:text-indigo-200" />
             </Link>
-            <Link href="#" aria-label="Notifications">
+            <Link href="#" aria-label="Notifications" title="Notifications - coming soon">
               <FiBell size={28} className="hover:text-indigo-200" />
             </Link>
 

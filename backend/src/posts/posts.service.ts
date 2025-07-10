@@ -315,4 +315,12 @@ export class PostsService {
 
     return results.map((r) => r.tag);
   }
+
+    async findLatestPosts(limit = 5) {
+    return this.postModel
+      .find({ isPublished: true })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .select("title _id");
+  }
 }

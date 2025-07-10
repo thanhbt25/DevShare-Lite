@@ -36,6 +36,11 @@ export class PostsController {
     return this.postsService.findTopContributors(); 
   }
 
+  @Get("latest-posts")
+  async getLatestPosts() {
+    return this.postsService.findLatestPosts();
+  }
+
   @Post()
   create(@Body() dto: CreatePostDto) {
     return this.postsService.create(dto);
@@ -101,5 +106,4 @@ export class PostsController {
   async deletePost(@Param('id') id: string) {
     return this.postsService.deletePost(id);
   }
-
 }
