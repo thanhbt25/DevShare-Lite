@@ -22,9 +22,6 @@ type Props = {
   handleVote: (type: "upvote" | "downvote") => void;
   handleFavorite: () => void;
   handleCommentSubmit: () => void;
-  upvoteCount: number;
-  downvoteCount: number;
-  saveCount: number;
   comments: CommentType[];
   onCommentVote: (commentId: string) => void;
 };
@@ -39,9 +36,6 @@ const PostMainContent: React.FC<Props> = ({
   handleVote,
   handleFavorite,
   handleCommentSubmit,
-  upvoteCount,
-  downvoteCount,
-  saveCount,
   comments,
   onCommentVote,
 }) => {
@@ -50,9 +44,6 @@ const PostMainContent: React.FC<Props> = ({
       <SidebarButtons
         voted={voted}
         favorited={favorited}
-        upvoteCount={upvoteCount}
-        downvoteCount={downvoteCount}
-        saveCount={saveCount}
         handleVote={handleVote}
         handleFavorite={handleFavorite}
       />

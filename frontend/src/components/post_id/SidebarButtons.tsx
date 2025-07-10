@@ -1,12 +1,9 @@
 import React from "react";
-import { FiThumbsUp, FiThumbsDown, FiHeart, FiClock } from "react-icons/fi";
+import { FiThumbsUp, FiThumbsDown, FiHeart } from "react-icons/fi";
 
 interface Props {
   voted: "upvoted" | "downvoted" | null;
   favorited: boolean;
-  upvoteCount: number;
-  downvoteCount: number;
-  saveCount: number;
   handleVote: (type: "upvote" | "downvote") => void;
   handleFavorite: () => void;
 }
@@ -14,9 +11,6 @@ interface Props {
 const SidebarButtons: React.FC<Props> = ({
   voted,
   favorited,
-  upvoteCount,
-  downvoteCount,
-  saveCount,
   handleVote,
   handleFavorite,
 }) => {
@@ -32,7 +26,6 @@ const SidebarButtons: React.FC<Props> = ({
         }`}
       >
         <FiThumbsUp size={20} />
-        <div className="text-xs mt-1">{upvoteCount}</div>
       </button>
 
       <button
@@ -45,7 +38,6 @@ const SidebarButtons: React.FC<Props> = ({
         }`}
       >
         <FiThumbsDown size={20} />
-        <div className="text-xs mt-1">{downvoteCount}</div>
       </button>
 
       <button
@@ -58,14 +50,6 @@ const SidebarButtons: React.FC<Props> = ({
         }`}
       >
         <FiHeart size={20} className={favorited ? "fill-red-600" : ""} />
-        <div className="text-xs mt-1">{saveCount}</div>
-      </button>
-
-      <button
-        title="Watch later"
-        className="p-2 rounded-full text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition"
-      >
-        <FiClock size={20} />
       </button>
     </div>
   );

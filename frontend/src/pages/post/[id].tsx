@@ -29,41 +29,41 @@ export default function PostDetailPage() {
   }, [user]);
 
   // Fetch bài viết
-  useEffect(() => {
-    if (typeof id === "string") {
-      axiosInstance.post(`/posts/${id}/view`);
+  // useEffect(() => {
+  //   if (typeof id === "string") {
+  //     axiosInstance.post(`/posts/${id}/view`);
 
-      axiosInstance
-        .get(`/posts/${id}`)
-        .then((res) => {
-          const data = res.data;
-          setPost(data);
+  //     axiosInstance
+  //       .get(`/posts/${id}`)
+  //       .then((res) => {
+  //         const data = res.data;
+  //         setPost(data);
 
-          if (user) {
-            setFavorited(data.favoritedBy?.includes(user._id));
-            if (data.votedUpUsers?.includes(user._id)) setVoted("upvoted");
-            else if (data.votedDownUsers?.includes(user._id))
-              setVoted("downvoted");
-            else setVoted(null);
-          }
+  //         if (user) {
+  //           setFavorited(data.favoritedBy?.includes(user._id));
+  //           if (data.votedUpUsers?.includes(user._id)) setVoted("upvoted");
+  //           else if (data.votedDownUsers?.includes(user._id))
+  //             setVoted("downvoted");
+  //           else setVoted(null);
+  //         }
 
-          setLoading(false);
-        })
-        .catch(() => setLoading(false));
-    }
-  }, [id, user]);
+  //         setLoading(false);
+  //       })
+  //       .catch(() => setLoading(false));
+  //   }
+  // }, [id, user]);
 
-  useEffect(() => {
-    if (typeof id === "string") {
-      axiosInstance
-        .get(`/comments/post/${id}`)
-        .then((res) => {
-          console.log("Comments:", res.data);
-          setComments(res.data);
-        })
-        .catch((err) => console.error("Comment fetch error:", err));
-    }
-  }, [id]);
+  // useEffect(() => {
+  //   if (typeof id === "string") {
+  //     axiosInstance
+  //       .get(`/comments/post/${id}`)
+  //       .then((res) => {
+  //         console.log("Comments:", res.data);
+  //         setComments(res.data);
+  //       })
+  //       .catch((err) => console.error("Comment fetch error:", err));
+  //   }
+  // }, [id]);
 
   const enrichComments = async (
     comments: any[],
@@ -105,7 +105,6 @@ export default function PostDetailPage() {
   useEffect(() => {
     const fetchData = async () => {
       if (typeof id !== "string") return;
-
       try {
         const [postRes, commentRes] = await Promise.all([
           axiosInstance.get(`/posts/${id}`),
@@ -115,19 +114,17 @@ export default function PostDetailPage() {
         const postData = postRes.data;
         const commentData = commentRes.data;
 
-        // Gộp tất cả authorId từ post + comment
+        // Author enrichment
         const authorIds = [
           postData.authorId,
           ...commentData.map((c: any) => c.authorId),
         ];
-
         const uniqueIds = [
           ...new Set(
             authorIds.map((id: any) => {
               if (typeof id === "string") return id;
-              if (typeof id === "object" && id !== null) {
+              if (typeof id === "object" && id !== null)
                 return id._id?.toString?.() || id.id?.toString?.() || "";
-              }
               return "";
             })
           ),
@@ -142,6 +139,19 @@ export default function PostDetailPage() {
           userMap[user.id] = user.username;
         });
 
+        // Cập nhật trạng thái vote/save
+        if (user) {
+          setFavorited(postData.favoritedBy?.includes(user._id));
+          if (postData.votedUpUsers?.includes(user._id)) {
+            setVoted("upvoted");
+          } else if (postData.votedDownUsers?.includes(user._id)) {
+            setVoted("downvoted");
+          } else {
+            setVoted(null);
+          }
+        }
+
+        // Set lại post đầy đủ (gồm votes, favorites,...)
         setPost({
           ...postData,
           authorName: userMap[postData.authorId] || "anonymous",
