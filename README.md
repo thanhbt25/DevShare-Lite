@@ -1,13 +1,13 @@
 # DevShare Lite
 
-## 👨‍💻 Thông tin tác giả
+## Thông tin tác giả
 - **Họ và tên:** Bùi Trung Thanh  
 - **MSSV:** 23020706  
 - **Trường:** Đại học Công nghệ - Đại học Quốc gia Hà Nội  
 
 ---
 
-## 📌 Tổng quan dự án
+## Tổng quan dự án
 
 **DevShare Lite** là một diễn đàn trực tuyến nơi người dùng có thể:
 
@@ -19,7 +19,7 @@ Mục tiêu là xây dựng một cộng đồng nhỏ phục vụ trao đổi t
 
 ---
 
-## ✅ Các chức năng chính
+## Các chức năng chính
 
 ### 1. Xác thực người dùng
 - Đăng ký tài khoản mới (sử dụng email và mật khẩu)
@@ -115,42 +115,42 @@ Mục tiêu là xây dựng một cộng đồng nhỏ phục vụ trao đổi t
 
 ---
 
-## 🗂️ Cấu trúc thư mục
+## Cấu trúc thư mục
 
 ```
 
-backend/
-├── app/
+backend/ (theo cáu trúc thư mục của Nest.js)
+├── app/ (module ứng dụng, nơi sử dụng các module khác) 
 │   ├── app.controller.ts
 │   ├── app.module.ts
 │   └── app.service.ts
-├── auth/
+├── auth/ (module xử lý đăng ký, đăng nhập)
 │   ├── auth.controller.ts
 │   ├── auth.module.ts
 │   └── auth.service.ts
-├── comments/
+├── comments/ (module xử lý cơ sở dữ liệu liên quan tới comments)
 │   ├── comments.controller.ts
 │   ├── comments.module.ts
 │   └── comments.service.ts
-├── posts/
+├── posts/ (module xử lý cơ sở dữ liệu liên quan tới posts)
 │   ├── drafts.controller.ts
 │   ├── posts.controller.ts
 │   ├── posts.module.ts
 │   └── posts.service.ts
-└── users/
-├── users.controller.ts
-├── users.module.ts
-└── users.service.ts
+└── users/ (module xử lý cơ sở dữ liệu liên quan tới users)
+    ├── users.controller.ts
+    ├── users.module.ts
+    └── users.service.ts
 
 frontend/
-├── components/
-│   ├── common/ (Navbar, Footer, Sidebar, Layout, MarkdownEditor)
+├── components/ (các thành phân tách nhỏ ra từ page và các thành phần phổ biến, được dùng nhiều)
+│   ├── common/ (Navbar, Footer, Sidebar, Layout, MarkdownEditor): c
 │   ├── create-post/
 │   ├── index/
 │   ├── post\_id/ (CommentEditor, CommentList, etc.)
 │   ├── review/
 │   └── update-profile/
-├── contexts/ (UserContext)
+├── contexts/ (UserContext) (lưu thông tin của người dùng trong phiên làm việc)
 ├── pages/ (Next.js routing)
 └── utils/ (api.ts kết nối backend)
 
@@ -158,7 +158,7 @@ frontend/
 
 ---
 
-## 🚀 Hướng dẫn cài đặt và chạy dự án
+## Hướng dẫn cài đặt và chạy dự án
 
 ### 1. Yêu cầu hệ thống
 
