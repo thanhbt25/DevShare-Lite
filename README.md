@@ -1,8 +1,3 @@
-Dưới đây là nội dung đã được định dạng lại theo chuẩn Markdown để bạn có thể copy vào file `README.md` và `git push` lên GitHub một cách đẹp và hợp lệ:
-
----
-
-```markdown
 # DevShare Lite
 
 ## 👨‍💻 Thông tin tác giả
@@ -57,8 +52,6 @@ Mục tiêu là xây dựng một cộng đồng nhỏ phục vụ trao đổi t
 ### 7. Bảng xếp hạng
 - Top 5 người dùng đóng góp nhiều nhất
 - Top 10 tags phổ biến nhất
-
----
 
 ## 🛠️ Công nghệ sử dụng
 
