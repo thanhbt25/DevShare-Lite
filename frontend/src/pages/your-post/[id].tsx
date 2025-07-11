@@ -8,6 +8,9 @@ import { useUser } from "@/contexts/UserContext";
 import ThreeColumnLayout from "@/components/common/ThreeColumnsLayout";
 import RightSidebar from "@/components/post_id/RightSideBar";
 import "@/styles/globals.css";
+import MarkdownPreview from "@uiw/react-markdown-preview";
+
+import { FiThumbsUp, FiThumbsDown, FiHeart } from "react-icons/fi";
 
 export default function ManagePostDetailPage() {
   const router = useRouter();
@@ -30,8 +33,6 @@ export default function ManagePostDetailPage() {
           setLoading(false);
         })
         .catch(() => setLoading(false));
-
-      console.log("user id:", user?._id, "\nauthor id: ", post?.authorId.id);
     }
   }, [id]);
 
@@ -51,17 +52,22 @@ export default function ManagePostDetailPage() {
     try {
       await axiosInstance.delete(`/posts/${post._id}`);
       alert("Đã xoá bài viết.");
-      router.push("/your-question"); // hoặc "/your-post/review"
+      router.push("/your-question");
     } catch (err) {
       console.error("Lỗi khi xoá bài viết:", err);
       alert("Không thể xoá bài viết.");
     }
   };
 
-  const handleShowUserList = async (type: "upvotes" | "downvotes") => {
+  const handleShowUserList = async (
+    type: "upvotes" | "downvotes" | "favorites"
+  ) => {
     if (!post) return;
-    const userIds =
-      type === "upvotes" ? post.votedUpUsers : post.votedDownUsers;
+
+    let userIds: string[] = [];
+    if (type === "upvotes") userIds = post.votedUpUsers;
+    else if (type === "downvotes") userIds = post.votedDownUsers;
+    else if (type === "favorites") userIds = post.favoritedBy;
 
     try {
       const res = await axiosInstance.post("/users/bulk", { ids: userIds });
@@ -102,30 +108,36 @@ export default function ManagePostDetailPage() {
                 </div>
               )}
 
-              <div
-                className="prose max-w-none"
-                dangerouslySetInnerHTML={{ __html: post.html || post.content }}
+              <MarkdownPreview
+                source={post?.content || "Không có nội dung"}
+                wrapperElement={{ "data-color-mode": "light" }}
               />
 
               <div className="flex gap-6 text-sm text-gray-600 mt-2">
                 <span
                   onClick={() => handleShowUserList("upvotes")}
-                  className="cursor-pointer hover:text-blue-600 underline"
+                  className="cursor-pointer hover:text-green-600 flex items-center gap-1"
                 >
-                  👍 {post.votedUpUsers?.length || 0} upvotes
+                  <FiThumbsUp size={16} />
+                  {post.votedUpUsers?.length || 0} upvotes
                 </span>
                 <span
                   onClick={() => handleShowUserList("downvotes")}
-                  className="cursor-pointer hover:text-blue-600 underline"
+                  className="cursor-pointer hover:text-red-600 flex items-center gap-1"
                 >
-                  👎 {post.votedDownUsers?.length || 0} downvotes
+                  <FiThumbsDown size={16} />
+                  {post.votedDownUsers?.length || 0} downvotes
                 </span>
-                <span className="text-gray-500">
-                  💾 {post.favoritedBy?.length || 0} saves
+                <span
+                  onClick={() => handleShowUserList("favorites")}
+                  className="cursor-pointer hover:text-pink-600 flex items-center gap-1"
+                >
+                  <FiHeart size={16} />
+                  {post.favoritedBy?.length || 0} favorites
                 </span>
               </div>
 
-              {user?._id === post?.authorId.id && (
+              {user?._id === post?.authorId?.id && (
                 <div className="flex gap-4 mt-6">
                   <button
                     onClick={handleEdit}
@@ -146,14 +158,15 @@ export default function ManagePostDetailPage() {
         </div>
       </ThreeColumnLayout>
 
-      {/* Modal hiển thị danh sách user đã vote */}
       {userListModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded p-6 max-w-md w-full shadow-lg">
             <h2 className="text-xl font-bold mb-4">
               {userListModal.type === "upvotes"
                 ? "Người đã upvote"
-                : "Người đã downvote"}
+                : userListModal.type === "downvotes"
+                ? "Người đã downvote"
+                : "Người đã favorite"}
             </h2>
             <ul className="space-y-2 max-h-60 overflow-y-auto">
               {userListModal.users.map((user) => (
