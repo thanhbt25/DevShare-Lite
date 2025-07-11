@@ -32,7 +32,10 @@ export class PostsService {
   }
 
   async findPostByUser(userId: string): Promise<Post[]> {
-    return this.postModel.find({ authorId: userId, isPublished: true });
+    return this.postModel
+    .find({ authorId: userId, isPublished: true })
+    .sort({createdAt: -1})
+    .exec();
   }
 
   async findDraftByUser(userId: string): Promise<Post[]> {

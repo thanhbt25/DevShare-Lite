@@ -41,6 +41,7 @@ export default function ManagePostDetailPage() {
 
         const enriched = await enrichComments(commentRes.data, user?._id);
         setComments(enriched);
+        console.log("author id: ", post?.authorId.id);
       } catch (err) {
         console.error("Error loading post or comments:", err);
       } finally {
@@ -56,9 +57,13 @@ export default function ManagePostDetailPage() {
     currentUserId?: string
   ): Promise<any[]> => {
     const authorIds = comments.map((c) => c.authorId);
-    const uniqueIds = [...new Set(authorIds.map((id) => (typeof id === "object" ? id._id : id)))];
+    const uniqueIds = [
+      ...new Set(authorIds.map((id) => (typeof id === "object" ? id._id : id))),
+    ];
 
-    const usersRes = await axiosInstance.post("/users/bulk", { ids: uniqueIds });
+    const usersRes = await axiosInstance.post("/users/bulk", {
+      ids: uniqueIds,
+    });
     const userMap: Record<string, string> = {};
     usersRes.data.forEach((u: any) => (userMap[u.id] = u.username));
 
@@ -136,7 +141,8 @@ export default function ManagePostDetailPage() {
   const handleEdit = () => router.push(`/edit/${post._id}`);
   const handleDelete = async () => {
     if (!user || !post) return;
-    const authorId = typeof post.authorId === "string" ? post.authorId : post.authorId._id;
+    const authorId =
+      typeof post.authorId === "string" ? post.authorId : post.authorId._id;
     if (user._id !== authorId) return alert("No permission");
 
     if (!confirm("Delete this post?")) return;
@@ -228,7 +234,7 @@ export default function ManagePostDetailPage() {
                 </span>
               </div>
 
-              {user?._id === post?.authorId?._id && (
+              {user?._id === post?.authorId.id && (
                 <div className="flex gap-4 mt-4">
                   <button
                     onClick={handleEdit}

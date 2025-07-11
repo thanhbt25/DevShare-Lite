@@ -32,14 +32,6 @@ export default function UpdateProfilePage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    console.log("👤 Current user from context:", user);
-    console.log("Current id: ", userId);
-    console.log("Current username: ", user?.username);
-    console.log("Current email: ", user?.email);
-    console.log("Current avatar: ", user?.avatar);
-  }, [user]);
-
-  useEffect(() => {
     if (user) {
       setForm({
         username: user.username,

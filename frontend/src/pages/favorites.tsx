@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import axiosInstance from "@/utils/api";
 import ThreeColumnLayout from "@/components/common/ThreeColumnsLayout";
 import RightSidebar from "@/components/index/RightSidebar";
-import PostCard from "@/components/review/ReviewPostcard";
+import PostCard from "@/components/index/PostCard";
 import { useUser } from "@/contexts/UserContext";
 
 export default function FavoritesPage() {

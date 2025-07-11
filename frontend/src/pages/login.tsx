@@ -47,7 +47,7 @@ export default function Login() {
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block text-indigo-700 mb-1" htmlFor="username">
-              Username/Email
+              Username
             </label>
             <input
               id="username"
