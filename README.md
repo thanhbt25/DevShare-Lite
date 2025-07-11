@@ -1,36 +1,223 @@
-# *DevShareLite*
-"DevShare Lite" là một diễn đàn trực tuyến nơi người dùng có thể đăng tải các bài viết chia sẻ kiến thức, đặt câu hỏi về các vấn đề kỹ thuật, và tham gia trả lời, bình luận. Mục tiêu là xây dựng một cộng đồng nhỏ, tập trung vào việc trao đổi thông tin trong lĩnh vực CNTT
+Dưới đây là nội dung đã được định dạng lại theo chuẩn Markdown để bạn có thể copy vào file `README.md` và `git push` lên GitHub một cách đẹp và hợp lệ:
 
-## *Yêu cầu chức năng*
-1. Xác thực Người dùng:
-- Đăng ký tài khoản mới (sử dụng email và mật khẩu).
-- Đăng nhập vào hệ thống.
-- Đăng xuất khỏi hệ thống.
+---
 
-2. Quản lý Bài viết (Posts):
-- Người dùng đã đăng nhập có thể tạo bài viết mới (tiêu đề, nội dung sử dụng Markdown cơ bản, gắn thẻ (tags) liên quan).
-- Bài viết có thể lưu trữ ở trạng thái nháp (Draft), và có thể được công khai (Publish) cho mọi người cùng xem
-- Xem danh sách các bài viết (có phân trang).
-- Xem chi tiết một bài viết.
-- Người tạo bài viết có thể chỉnh sửa hoặc xóa bài viết của mình.
+```markdown
+# DevShare Lite
 
-3. Bình luận:
-- Người dùng đã đăng nhập có thể bình luận về bài viết
-- Người dùng có thể trả lời cho một comment bên trong bài viết
+## 👨‍💻 Thông tin tác giả
+- **Họ và tên:** Bùi Trung Thanh  
+- **MSSV:** 23020706  
+- **Trường:** Đại học Công nghệ - Đại học Quốc gia Hà Nội  
 
-4. Tìm kiếm Cơ bản:
-- Tìm kiếm bài viết và câu hỏi dựa trên tiêu đề hoặc nội dung.
+---
 
-5. Trang Cá nhân Người dùng (Basic User Profile):
-- Hiển thị thông tin cơ bản của người dùng (tên, email).
-- Danh sách các bài viết đã đăng, danh sách bài viết đang ở trạng thái Draft chờ đăng.
+## 📌 Tổng quan dự án
 
-## *Công nghệ sử dụng*
-1. Frontend
-- Sử dụng React.js với framework Next.js
-2. Backend 
-- Sử dụng Node.js với Nest.js (TypeScript)
-3. Cơ sở dữ liệu
+**DevShare Lite** là một diễn đàn trực tuyến nơi người dùng có thể:
 
-4. Quản lý mã nguồn 
-- Git 
+- Đăng tải bài viết chia sẻ kiến thức
+- Đặt câu hỏi về các vấn đề kỹ thuật
+- Tham gia thảo luận, bình luận, vote và lọc bài viết
+
+Mục tiêu là xây dựng một cộng đồng nhỏ phục vụ trao đổi thông tin trong lĩnh vực CNTT.
+
+---
+
+## ✅ Các chức năng chính
+
+### 1. Xác thực người dùng
+- Đăng ký tài khoản mới (sử dụng email và mật khẩu)
+- Đăng nhập hệ thống
+- Đăng xuất khỏi hệ thống
+
+### 2. Quản lý bài viết
+- Tạo bài viết mới (Markdown, tags)
+- Lưu ở trạng thái Draft hoặc Publish công khai
+- Xem danh sách bài viết (phân trang)
+- Xem chi tiết, chỉnh sửa, xóa bài viết
+- Lưu bài viết yêu thích
+- Upvote / Downvote bài viết
+- Xem ai đã tương tác và số lượt xem bài viết
+
+### 3. Bình luận
+- Bình luận bài viết (sau khi đăng nhập)
+- Trả lời bình luận (nested comment)
+
+### 4. Tìm kiếm
+- Tìm kiếm bài viết theo tiêu đề hoặc nội dung
+
+### 5. Trang cá nhân
+- Hiển thị và cập nhật thông tin cá nhân
+- Danh sách bài viết đã đăng và đang Draft
+
+### 6. Chế độ lọc bài viết
+- Lọc theo newest, unanswered, popular, top-voted
+
+### 7. Bảng xếp hạng
+- Top 5 người dùng đóng góp nhiều nhất
+- Top 10 tags phổ biến nhất
+
+---
+
+## 🛠️ Công nghệ sử dụng
+
+### 1. Frontend
+
+**Công nghệ chính:**
+
+- Next.js (v15.3.4)
+- React (v19)
+- TypeScript (v5+)
+- Tailwind CSS (v3.4.1)
+
+**Thư viện UI & Markdown:**
+
+- `@uiw/react-md-editor`: Markdown editor có preview
+- `@uiw/react-markdown-preview`: Hiển thị nội dung markdown
+- `react-icons`: Icon dạng component
+
+**Thư viện HTTP & Cookie:**
+
+- `axios`: Gửi HTTP request tới backend
+- `js-cookie`: Lưu token xác thực vào cookie
+
+**Thư viện cấu hình & môi trường:**
+
+- `dotenv`: Đọc biến môi trường từ `.env`
+- `postcss`, `autoprefixer`: Hỗ trợ Tailwind CSS
+
+**Thư viện upload ảnh:**
+
+- Sử dụng Cloudinary API để upload ảnh từ local lên cloud
+
+---
+
+### 2. Backend
+
+**Công nghệ chính:**
+
+- NestJS (v11+)
+- TypeScript (v5.7.3)
+
+**Thư viện xác thực & bảo mật:**
+
+- `passport`, `passport-jwt`, `@nestjs/passport`, `@nestjs/jwt`
+- `bcryptjs`: Mã hóa mật khẩu người dùng
+
+**Tiện ích hệ sinh thái NestJS:**
+
+- `dotenv`: Biến môi trường
+- `class-validator`: Xác thực DTO
+- `reflect-metadata`: Decorators
+- `rxjs`: Reactive programming
+
+---
+
+### 3. Cơ sở dữ liệu
+
+- **MongoDB** (NoSQL)
+- `mongoose`: ODM tương tác với MongoDB
+- `@nestjs/mongoose`: Tích hợp với NestJS
+
+---
+
+## 🗂️ Cấu trúc thư mục
+
+```
+
+backend/
+├── app/
+│   ├── app.controller.ts
+│   ├── app.module.ts
+│   └── app.service.ts
+├── auth/
+│   ├── auth.controller.ts
+│   ├── auth.module.ts
+│   └── auth.service.ts
+├── comments/
+│   ├── comments.controller.ts
+│   ├── comments.module.ts
+│   └── comments.service.ts
+├── posts/
+│   ├── drafts.controller.ts
+│   ├── posts.controller.ts
+│   ├── posts.module.ts
+│   └── posts.service.ts
+└── users/
+├── users.controller.ts
+├── users.module.ts
+└── users.service.ts
+
+frontend/
+├── components/
+│   ├── common/ (Navbar, Footer, Sidebar, Layout, MarkdownEditor)
+│   ├── create-post/
+│   ├── index/
+│   ├── post\_id/ (CommentEditor, CommentList, etc.)
+│   ├── review/
+│   └── update-profile/
+├── contexts/ (UserContext)
+├── pages/ (Next.js routing)
+└── utils/ (api.ts kết nối backend)
+
+````
+
+---
+
+## 🚀 Hướng dẫn cài đặt và chạy dự án
+
+### 1. Yêu cầu hệ thống
+
+- Node.js >= 18
+- npm (theo Node.js)
+- MongoDB (local hoặc MongoDB Atlas)
+- Cloudinary (tuỳ chọn nếu muốn upload ảnh)
+
+---
+
+### 2. Chạy Backend (NestJS)
+
+**Bước 1:** Mở terminal, vào thư mục backend:
+
+```bash
+cd ./backend/
+````
+
+**Bước 2:** Cài dependencies:
+
+```bash
+npm install
+```
+
+**Bước 3:** Tạo file `.env` dựa trên `.example.env`:
+
+**Bước 4:** Khởi chạy server:
+
+```bash
+npm start
+```
+
+---
+
+### 3. Chạy Frontend (Next.js)
+
+**Bước 1:** Mở terminal mới, vào thư mục frontend:
+
+```bash
+cd ./frontend/
+```
+
+**Bước 2:** Cài dependencies:
+
+```bash
+npm install
+```
+
+**Bước 3:** Tạo file `.env.local` dựa trên `.example.env.local`:
+
+**Bước 4:** Khởi chạy giao diện:
+
+```bash
+npm run dev
+```
