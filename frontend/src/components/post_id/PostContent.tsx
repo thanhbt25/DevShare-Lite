@@ -1,4 +1,5 @@
 import React from "react";
+import MarkdownPreview from "@uiw/react-markdown-preview";
 
 interface Props {
   post: any;
@@ -16,10 +17,16 @@ const PostContent: React.FC<Props> = ({ post, loading }) => {
 
       <div className="bg-indigo-50 text-sm p-2 rounded-md flex justify-between mb-4 border text-gray-700">
         <span>
-          Asked: {post?.createdAt ? new Date(post.createdAt).toLocaleDateString() : "?"}
+          Asked:{" "}
+          {post?.createdAt
+            ? new Date(post.createdAt).toLocaleDateString()
+            : "?"}
         </span>
         <span>
-          Modified: {post?.updatedAt ? new Date(post.updatedAt).toLocaleDateString() : "?"}
+          Modified:{" "}
+          {post?.updatedAt
+            ? new Date(post.updatedAt).toLocaleDateString()
+            : "?"}
         </span>
         <span>Viewed: {post?.views || 0} times</span>
       </div>
@@ -36,7 +43,11 @@ const PostContent: React.FC<Props> = ({ post, loading }) => {
       </div>
 
       <div className="bg-white border rounded-md p-4 min-h-[200px] mb-4 shadow-sm">
-        <p>{post?.content || "Nội dung đang được cập nhật."}</p>
+        <MarkdownPreview
+          source={post?.content || "Nội dung đang được cập nhật."}
+          wrapperElement={{ "data-color-mode": "light" }}
+        />
+
         {post?.authorName && (
           <p className="text-sm text-right text-gray-500 mt-4 italic">
             By {post.authorId?.username}

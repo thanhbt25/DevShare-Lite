@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FiThumbsUp } from "react-icons/fi";
 import CommentEditor from "./CommentEditor";
+import MarkdownPreview from "@uiw/react-markdown-preview";
 
 interface CommentType {
   _id: string;
@@ -62,9 +63,13 @@ const CommentList: React.FC<Props> = ({
             <span>{cmt.authorName || "Anonymous"}</span>
             <span>{new Date(cmt.createdAt).toLocaleString()}</span>
           </div>
-          <div className="text-gray-800 text-sm whitespace-pre-line mb-2">
-            {cmt.content}
+          <div className="text-gray-800 text-sm mb-2">
+            <MarkdownPreview
+              source={cmt.content}
+              wrapperElement={{ "data-color-mode": "light" }}
+            />
           </div>
+
           <div className="flex items-center gap-4 text-sm text-gray-600">
             <button
               onClick={() => onCommentVote(cmt._id)}

@@ -76,10 +76,10 @@ export default function Navbar() {
       <div className="flex gap-10 items-center ml-4">
         {user ? (
           <>
-            <Link href="/create-post" aria-label="Add Post">
+            <Link href="/create-post" aria-label="Add Post" title="Add post">
               <FiPlusSquare size={28} className="hover:text-indigo-200" />
             </Link>
-            <Link href="#" aria-label="Notifications" title="Notifications - coming soon">
+            <Link href="#" aria-label="Notifications" title="Notifications">
               <FiBell size={28} className="hover:text-indigo-200" />
             </Link>
 
