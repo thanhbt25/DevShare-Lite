@@ -84,7 +84,7 @@ const CommentList: React.FC<Props> = ({
               }
               className="text-xs text-indigo-600 hover:underline"
             >
-              {activeReply === cmt._id ? "Hủy" : "Trả lời"}
+              {activeReply === cmt._id ? "Cancel" : "Comment/Answer"}
             </button>
           </div>
 
@@ -108,7 +108,7 @@ const CommentList: React.FC<Props> = ({
     <div className="space-y-4">
       <h3 className="text-lg font-semibold">Comments</h3>
       {topLevel.length === 0 ? (
-        <p className="text-gray-500">Chưa có bình luận nào.</p>
+        <p className="text-gray-500">No comments yet.</p>
       ) : (
         topLevel.map((cmt) => renderComment(cmt))
       )}

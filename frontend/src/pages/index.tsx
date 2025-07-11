@@ -14,7 +14,7 @@ export default function HomePage() {
 
   const [posts, setPosts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const postsPerPage = 5;
+  const postsPerPage = 10;
   const [totalPosts, setTotalPosts] = useState(0);
   const [loading, setLoading] = useState(false);
 
@@ -31,14 +31,14 @@ export default function HomePage() {
         setPosts(res.data.posts);
         setTotalPosts(res.data.total);
       } catch (error) {
-        console.error("❌ Error fetching posts:", error);
+        console.error("Error fetching posts:", error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchPosts();
-  }, [activeTab, currentPage, sort]); // ⬅️ thêm sort để re-fetch khi chọn lại
+  }, [activeTab, currentPage, sort]); 
 
   return (
     <div className="flex flex-col min-h-screen">

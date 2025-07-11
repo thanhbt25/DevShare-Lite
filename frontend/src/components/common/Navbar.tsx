@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FiPlusSquare, FiBell, FiSearch } from "react-icons/fi";
+import { FiPlusSquare, FiSearch, FiFileText } from "react-icons/fi";
 import { useState, useEffect, useRef } from "react";
 import Cookies from "js-cookie";
 import { useUser } from "@/contexts/UserContext";
@@ -79,8 +79,12 @@ export default function Navbar() {
             <Link href="/create-post" aria-label="Add Post" title="Add post">
               <FiPlusSquare size={28} className="hover:text-indigo-200" />
             </Link>
-            <Link href="#" aria-label="Notifications" title="Notifications">
-              <FiBell size={28} className="hover:text-indigo-200" />
+            <Link
+              href="/draft/review"
+              aria-label="Your Posts"
+              title="Your Draft"
+            >
+              <FiFileText size={26} className="hover:text-indigo-200" />
             </Link>
 
             {/* Avatar dropdown */}

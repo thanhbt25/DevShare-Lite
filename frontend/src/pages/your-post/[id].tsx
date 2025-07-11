@@ -41,21 +41,21 @@ export default function ManagePostDetailPage() {
   };
 
   const handleDelete = async () => {
-    if (!user || !post) return alert("Bạn cần đăng nhập.");
+    if (!user || !post) return alert("You need to login to delete.");
     const authorId =
       typeof post.authorId === "string" ? post.authorId : post.authorId._id;
     if (user._id !== authorId)
-      return alert("Bạn không có quyền xoá bài viết này.");
-    const confirmed = confirm("Bạn có chắc chắn muốn xoá bài viết này?");
+      return alert("You don't have permission to delete this post.");
+    const confirmed = confirm("Are you sure to delete this post?");
     if (!confirmed) return;
 
     try {
       await axiosInstance.delete(`/posts/${post._id}`);
-      alert("Đã xoá bài viết.");
+      alert("Post deleted.");
       router.push("/your-question");
     } catch (err) {
-      console.error("Lỗi khi xoá bài viết:", err);
-      alert("Không thể xoá bài viết.");
+      console.error("Error deleting post:", err);
+      alert("Cannot delete the post.");
     }
   };
 
@@ -73,7 +73,7 @@ export default function ManagePostDetailPage() {
       const res = await axiosInstance.post("/users/bulk", { ids: userIds });
       setUserListModal({ type, users: res.data });
     } catch (err) {
-      console.error("Lỗi khi lấy danh sách user:", err);
+      console.error("Error fetching user list:", err);
     }
   };
 
@@ -82,15 +82,15 @@ export default function ManagePostDetailPage() {
   return (
     <div className="flex flex-col min-h-screen bg-white text-gray-800">
       <Head>
-        <title>DevShare Lite - Quản lý bài viết</title>
+        <title>DevShare Lite - Managing your post</title>
       </Head>
 
       <ThreeColumnLayout rightSidebar={<RightSidebar />}>
         <div className="p-4">
           {loading ? (
-            <p>Đang tải bài viết...</p>
+            <p>Downloading your posts...</p>
           ) : !post ? (
-            <p>Không tìm thấy bài viết.</p>
+            <p>Cannot find your post.</p>
           ) : (
             <div className="space-y-4">
               <h1 className="text-3xl font-bold">{post.title}</h1>
@@ -109,7 +109,7 @@ export default function ManagePostDetailPage() {
               )}
 
               <MarkdownPreview
-                source={post?.content || "Không có nội dung"}
+                source={post?.content || "No content"}
                 wrapperElement={{ "data-color-mode": "light" }}
               />
 
@@ -163,10 +163,10 @@ export default function ManagePostDetailPage() {
           <div className="bg-white rounded p-6 max-w-md w-full shadow-lg">
             <h2 className="text-xl font-bold mb-4">
               {userListModal.type === "upvotes"
-                ? "Người đã upvote"
+                ? "Users who upvoted"
                 : userListModal.type === "downvotes"
-                ? "Người đã downvote"
-                : "Người đã favorite"}
+                ? "Users who downvoted"
+                : "Users who saved your post"}
             </h2>
             <ul className="space-y-2 max-h-60 overflow-y-auto">
               {userListModal.users.map((user) => (

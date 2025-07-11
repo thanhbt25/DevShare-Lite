@@ -146,15 +146,38 @@ const CreatePostPage = () => {
         </div>
 
         <aside className="w-full md:w-1/3 text-sm text-gray-700">
-          <h3 className="font-semibold mb-2">Tips</h3>
-          <ol className="list-decimal list-inside space-y-2">
+          <h3 className="font-semibold mb-2">Writing Tips</h3>
+          <ul className="list-disc list-inside space-y-2">
             <li>
-              Write your body content using markdown format. Use **, #, etc. for
-              headings and formatting.
+              <strong>Use clear titles:</strong> Make your title specific and
+              descriptive so readers immediately understand what your post is
+              about.
             </li>
-            <li>Make sure your formatting is clean and easy to read.</li>
-            <li>Use the spacebar to add tags. Tags are displayed as boxes.</li>
-          </ol>
+            <li>
+              <strong>Structure your content:</strong> Organize your post with
+              headings, bullet points, and code blocks (if applicable) to
+              improve readability.
+            </li>
+            <li>
+              <strong>Include context:</strong> Provide enough background
+              information so that readers unfamiliar with your problem or topic
+              can still follow.
+            </li>
+            <li>
+              <strong>Be concise and relevant:</strong> Avoid unnecessary
+              filler. Focus on what helps readers understand your point or
+              resolve the issue.
+            </li>
+            <li>
+              <strong>Use Markdown formatting:</strong> Markdown is supported.
+              Use it to add emphasis, insert images, highlight code, and
+              structure your post effectively.
+            </li>
+            <li>
+              <strong>Tag wisely:</strong> Use relevant and specific tags to
+              help others find your post more easily.
+            </li>
+          </ul>
         </aside>
       </main>
 

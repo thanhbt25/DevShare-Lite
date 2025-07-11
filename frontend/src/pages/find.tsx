@@ -33,17 +33,17 @@ export default function SearchResultPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Head>
-        <title>Kết quả tìm kiếm - DevShare Lite</title>
+        <title>Searching results - DevShare Lite</title>
       </Head>
 
-      <ThreeColumnLayout rightSidebar={RightSidebar}>
+      <ThreeColumnLayout rightSidebar={<RightSidebar />}>
         <div className="p-4">
-          <h1 className="text-xl font-bold mb-4">Kết quả tìm kiếm cho: <span className="text-indigo-600">{q}</span></h1>
+          <h1 className="text-xl font-bold mb-4">Searching results for: <span className="text-indigo-600">{q}</span></h1>
 
           {loading ? (
-            <p>Đang tải kết quả...</p>
+            <p>Downloading results...</p>
           ) : posts.length === 0 ? (
-            <p className="text-gray-500">Không tìm thấy bài viết nào.</p>
+            <p className="text-gray-500">No suiable post.</p>
           ) : (
             <div className="space-y-4">
               {posts.map((post: any) => (

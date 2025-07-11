@@ -20,7 +20,7 @@ export default function ReviewDraftPage() {
         const res = await axiosInstance.get(`/drafts/user/${user._id}`);
         setDrafts(res.data);
       } catch (error) {
-        console.error("Lỗi khi lấy bài nháp:", error);
+        console.error("Error fetching your drafts:", error);
       }
       setLoading(false);
     };
@@ -31,19 +31,19 @@ export default function ReviewDraftPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Head>
-        <title>DevShare Lite - Bản Nháp</title>
+        <title>DevShare Lite - Your drafts</title>
       </Head>
 
-      <ThreeColumnLayout rightSidebar={RightSidebar}>
+      <ThreeColumnLayout rightSidebar={<RightSidebar />}>
         <div className="p-4">
-          <h1 className="text-2xl font-bold mb-4">Bài viết nháp của bạn</h1>
+          <h1 className="text-2xl font-bold mb-4">Your drafts</h1>
 
           {loading ? (
-            <p>Đang tải...</p>
+            <p>Downloading...</p>
           ) : !user ? (
-            <p className="text-red-500">Bạn cần đăng nhập để xem bản nháp.</p>
+            <p className="text-red-500">You need to login to see your drafts.</p>
           ) : drafts.length === 0 ? (
-            <p>Bạn chưa có bài viết nháp nào.</p>
+            <p>You haven't had any drafts yet.</p>
           ) : (
             <div className="space-y-4">
               {drafts.map((post: any) => (

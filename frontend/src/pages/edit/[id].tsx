@@ -33,8 +33,13 @@ export default function EditPostPage() {
         .then((res) => {
           const post = res.data;
           if (user && post.authorId.id !== user._id) {
-            console.log("author id is", post.authorId, "and user id is: ", user._id);
-            setErrorMessage("Bạn không có quyền chỉnh sửa bài viết này.");
+            console.log(
+              "author id is",
+              post.authorId,
+              "and user id is: ",
+              user._id
+            );
+            setErrorMessage("You do not have permission to edit this post.");
             return;
           }
 
@@ -45,8 +50,8 @@ export default function EditPostPage() {
           setTags(post.tags || []);
         })
         .catch((err) => {
-          console.error("Lỗi khi lấy post:", err);
-          setErrorMessage("Không thể tải bài viết.");
+          console.error("Error fetching post:", err);
+          setErrorMessage("Fail to load the posts");
         })
         .finally(() => setLoading(false));
     }
@@ -77,7 +82,7 @@ export default function EditPostPage() {
       };
 
       await axiosInstance.patch(`/posts/${id}`, payload);
-      setSuccessMessage("Bài viết đã được cập nhật.");
+      setSuccessMessage("Post updated successfully.");
 
       // Optional: redirect
       setTimeout(() => {
@@ -88,7 +93,7 @@ export default function EditPostPage() {
       const message =
         error.response?.data?.message ||
         error.message ||
-        "Không thể cập nhật bài viết.";
+        "Cannot update the post.";
       setErrorMessage(message);
     }
   };
@@ -103,17 +108,15 @@ export default function EditPostPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Head>
-        <title>DevShare Lite - Chỉnh sửa bài viết</title>
+        <title>DevShare Lite - Edit the post</title>
       </Head>
 
       <Navbar />
 
       <div className="bg-white py-4 px-6">
-        <h1 className="text-2xl font-semibold text-gray-800">
-          Chỉnh sửa bài viết
-        </h1>
+        <h1 className="text-2xl font-semibold text-gray-800">Edit the post</h1>
 
-        {loading && <p>Đang tải bài viết...</p>}
+        {loading && <p>Loading post...</p>}
 
         {errorMessage && (
           <div className="mt-4 text-red-600 font-medium bg-red-100 border border-red-300 rounded px-4 py-2">
@@ -150,11 +153,37 @@ export default function EditPostPage() {
           </div>
 
           <aside className="w-full md:w-1/3 text-sm text-gray-700">
-            <h3 className="font-semibold mb-2">Tips</h3>
+            <h3 className="font-semibold mb-2">Writing Tips</h3>
             <ul className="list-disc list-inside space-y-2">
-              <li>Markdown được hỗ trợ.</li>
-              <li>Dùng phím cách để tạo tag.</li>
-              <li>Đảm bảo nội dung rõ ràng và có format tốt.</li>
+              <li>
+                <strong>Use clear titles:</strong> Make your title specific and
+                descriptive so readers immediately understand what your post is
+                about.
+              </li>
+              <li>
+                <strong>Structure your content:</strong> Organize your post with
+                headings, bullet points, and code blocks (if applicable) to
+                improve readability.
+              </li>
+              <li>
+                <strong>Include context:</strong> Provide enough background
+                information so that readers unfamiliar with your problem or
+                topic can still follow.
+              </li>
+              <li>
+                <strong>Be concise and relevant:</strong> Avoid unnecessary
+                filler. Focus on what helps readers understand your point or
+                resolve the issue.
+              </li>
+              <li>
+                <strong>Use Markdown formatting:</strong> Markdown is supported.
+                Use it to add emphasis, insert images, highlight code, and
+                structure your post effectively.
+              </li>
+              <li>
+                <strong>Tag wisely:</strong> Use relevant and specific tags to
+                help others find your post more easily.
+              </li>
             </ul>
           </aside>
         </main>

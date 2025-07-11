@@ -20,7 +20,7 @@ export default function ReviewPostedPage() {
         const res = await axiosInstance.get(`/posts/user/${user._id}`);
         setPosts(res.data);
       } catch (error) {
-        console.error("Lỗi khi lấy bài đã đăng:", error);
+        console.error("Error fetching posted articles:", error);
       }
       setLoading(false);
     };
@@ -31,19 +31,19 @@ export default function ReviewPostedPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Head>
-        <title>DevShare Lite - Bài đã đăng</title>
+        <title>DevShare Lite - Your Published Posts</title>
       </Head>
 
-      <ThreeColumnLayout rightSidebar={RightSidebar}>
+      <ThreeColumnLayout>
         <div className="p-4">
-          <h1 className="text-2xl font-bold mb-4">Bài viết đã đăng của bạn</h1>
+          <h1 className="text-2xl font-bold mb-4">Your Published Posts</h1>
 
           {loading ? (
-            <p>Đang tải...</p>
+            <p>Loading...</p>
           ) : !user ? (
-            <p className="text-red-500">Bạn cần đăng nhập để xem bài đã đăng.</p>
+            <p className="text-red-500">You need to log in to view your posts.</p>
           ) : posts.length === 0 ? (
-            <p>Bạn chưa có bài viết nào được đăng.</p>
+            <p>You haven't published any posts yet.</p>
           ) : (
             <div className="space-y-4">
               {posts.map((post: any) => (

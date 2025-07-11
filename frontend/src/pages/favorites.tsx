@@ -26,7 +26,7 @@ export default function FavoritesPage() {
         const favoritesArray = Array.isArray(data) ? data : [];
         setFavoritePosts(favoritesArray);
       } catch (error) {
-        console.error("Lỗi khi lấy bài viết đã lưu:", error);
+        console.error("Error fetching your favorite posts:", error);
       }
       setLoading(false);
     };
@@ -37,19 +37,19 @@ export default function FavoritesPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Head>
-        <title>DevShare Lite - Bài viết đã lưu</title>
+        <title>DevShare Lite - Your favorite posts</title>
       </Head>
 
-      <ThreeColumnLayout rightSidebar={RightSidebar}>
+      <ThreeColumnLayout rightSidebar={< RightSidebar />}>
         <div className="p-4">
-          <h1 className="text-2xl font-bold mb-4">Bài viết đã lưu của bạn</h1>
+          <h1 className="text-2xl font-bold mb-4">Your favorite posts</h1>
 
           {loading ? (
-            <p>Đang tải...</p>
+            <p>Downloading...</p>
           ) : !user ? (
-            <p className="text-red-500">Bạn cần đăng nhập để xem bài viết đã lưu.</p>
+            <p className="text-red-500">You need to login to see your favorite posts.</p>
           ) : favoritePosts.length === 0 ? (
-            <p>Bạn chưa lưu bài viết nào.</p>
+            <p>You haven't saved any posts yet.</p>
           ) : (
             <div className="space-y-4">
               {favoritePosts.map((post: any) => (

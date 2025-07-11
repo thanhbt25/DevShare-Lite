@@ -25,24 +25,24 @@ export default function DraftDetailPage() {
           setPost(res.data);
         })
         .catch((err) => {
-          console.error("Lỗi khi fetch bài nháp:", err);
+          console.error("Error fetching drafts:", err);
         })
         .finally(() => setLoading(false));
     }
   }, [id]);
 
   const handleDelete = async () => {
-    if (!user || !post) return alert("Bạn cần đăng nhập.");
-    const confirmed = confirm("Bạn có chắc chắn muốn xoá bài viết này?");
+    if (!user || !post) return alert("You need to login to delete.");
+    const confirmed = confirm("Are you sure to delete this post?");
     if (!confirmed) return;
 
     try {
       await axiosInstance.delete(`/posts/${post._id}`);
-      alert("Đã xoá bài nháp.");
+      alert("Draft deleted.");
       router.push("/draft/review-draft");
     } catch (err) {
-      console.error("Lỗi khi xoá bài viết:", err);
-      alert("Không thể xoá bài viết.");
+      console.error("Error in deleting post:", err);
+      alert("Cannot detele the post.");
     }
   };
 
@@ -53,15 +53,15 @@ export default function DraftDetailPage() {
   return (
     <div className="flex flex-col min-h-screen bg-white text-gray-900">
       <Head>
-        <title>DevShare Lite - Xem Bản Nháp</title>
+        <title>DevShare Lite - Review you drafts</title>
       </Head>
 
-      <ThreeColumnLayout rightSidebar={RightSidebar}>
+      <ThreeColumnLayout rightSidebar={<RightSidebar />}>
         <div className="p-4">
           {loading ? (
-            <p>Đang tải bài viết...</p>
+            <p>Downloading you drafts...</p>
           ) : !post ? (
-            <p>Không tìm thấy bài viết.</p>
+            <p>Cannot find your drafts.</p>
           ) : (
             <div className="space-y-4">
               <h1 className="text-3xl font-bold">{post.title}</h1>

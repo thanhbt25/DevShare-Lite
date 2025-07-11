@@ -16,7 +16,7 @@ const CommentEditor: React.FC<Props> = ({ comment, setComment, handleCommentSubm
       <MarkdownEditor
         content={comment}
         setContent={setComment}
-        placeholder="Nhập bình luận hoặc câu trả lời bằng markdown..."
+        placeholder="Enter comments or answers in markdown..."
         height={200}
       />
       <button

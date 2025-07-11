@@ -1,4 +1,10 @@
-import { FaGithub, FaInstagram, FaLinkedin, FaFacebook } from 'react-icons/fa';
+import Link from "next/link";
+import {
+  FaGithub,
+  FaInstagram,
+  FaLinkedin,
+  FaFacebook,
+} from "react-icons/fa";
 
 export default function Footer() {
   return (
@@ -59,11 +65,26 @@ export default function Footer() {
         <div className="flex-1 min-w-[200px] ml-72">
           <h3 className="font-bold mb-2">SITE MAP</h3>
           <ul className="text-sm space-y-1">
-            <li>Home</li>
-            <li>Your question</li>
-            <li>Save</li>
-            <li>Tags</li>
-            <li>User</li>
+            <li>
+              <Link href="/" className="hover:underline">
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link href="/your-post/review" className="hover:underline">
+                Your Posts
+              </Link>
+            </li>
+            <li>
+              <Link href="/favorites" className="hover:underline">
+                Favorites
+              </Link>
+            </li>
+            <li>
+              <Link href="/draft/review" className="hover:underline">
+                Drafts
+              </Link>
+            </li>
           </ul>
         </div>
 
@@ -71,17 +92,27 @@ export default function Footer() {
         <div className="flex-1 min-w-[200px]">
           <h3 className="font-bold mb-2">LEGAL</h3>
           <ul className="text-sm space-y-1">
-            <li>Privacy policy</li>
-            <li>Terms of service</li>
-            <li>Cookie policy</li>
+            <li>
+              <Link href="https://en.wikipedia.org/wiki/Privacy_policy" className="hover:underline cursor-pointer">
+                Privacy Policy
+              </Link>
+            </li>
+            <li>
+              <Link href="https://en.wikipedia.org/wiki/Terms_of_service" className="hover:underline cursor-pointer">
+                Terms of Service
+              </Link>
+            </li>
+            <li>
+              <Link href="https://en.wikipedia.org/wiki/Third-party_cookies" className="hover:underline cursor-pointer">
+                Cookie Policy
+              </Link>
+            </li>
           </ul>
         </div>
       </div>
 
       <p className="text-center text-sm mt-6">
-        © 2025 Thanh Bùi. Built with{' '}
-        <span className="text-pink-400">♥</span> and{' '}
-        <span className="text-yellow-300">☕</span>.
+        © 2025 DevShare Lite by Thanh Bùi. All rights reserved.
       </p>
     </footer>
   );

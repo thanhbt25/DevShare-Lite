@@ -39,7 +39,7 @@ export default function PostDetailPage() {
   }, [user]);
 
   const onReplySubmit = async (parentId: string, content: string) => {
-    if (!user || !post) return alert("Bạn cần đăng nhập để phản hồi");
+    if (!user || !post) return alert("You need to login to reply!");
     if (!content) return;
     console.log('content is: ', content, 'parent id: ',  parentId);
 
@@ -172,7 +172,7 @@ export default function PostDetailPage() {
 
   const onCommentVote = async (commentId: string) => {
     try {
-      if (!user) return alert("Cần đăng nhập để vote");
+      if (!user) return alert("You need to login to vote!");
 
       const comment = comments.find((c) => c._id === commentId);
       const hasVoted = comment?.likedBy?.includes(user._id); // hoặc comment.hasVoted nếu đã enrich
@@ -192,10 +192,7 @@ export default function PostDetailPage() {
   };
 
   const handleFavorite = async () => {
-    if (!post || !user) return alert("Bạn cần đăng nhập để lưu bài viết");
-
-    console.log("📌 post._id:", post._id);
-    console.log("📌 user._id:", user._id);
+    if (!post || !user) return alert("You need to login to save the post.");
 
     try {
       if (favorited) {
@@ -219,7 +216,7 @@ export default function PostDetailPage() {
   };
 
   const handleVote = async (type: "upvote" | "downvote") => {
-    if (!post || !user) return alert("Bạn cần đăng nhập để vote");
+    if (!post || !user) return alert("You need to login to vote!");
 
     try {
       if (
@@ -241,7 +238,7 @@ export default function PostDetailPage() {
   };
 
   const handleCommentSubmit = async () => {
-    if (!user || !post) return alert("Bạn cần đăng nhập để bình luận");
+    if (!user || !post) return alert("You need to login to comment!");
     if (!comment.trim()) return;
 
     try {
