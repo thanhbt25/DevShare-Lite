@@ -14,7 +14,7 @@ export default function HomePage() {
 
   const [posts, setPosts] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const postsPerPage = 10;
+  const postsPerPage = 10; // post per page
   const [totalPosts, setTotalPosts] = useState(0);
   const [loading, setLoading] = useState(false);
 

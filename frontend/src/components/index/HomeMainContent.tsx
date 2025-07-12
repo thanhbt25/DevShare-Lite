@@ -1,6 +1,5 @@
 import React from "react";
 import PostCard from "@/components/index/PostCard";
-import { FiFilter } from "react-icons/fi";
 
 type Props = {
   activeTab: "blog" | "qa";

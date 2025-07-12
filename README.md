@@ -31,9 +31,9 @@ Mục tiêu là xây dựng một cộng đồng nhỏ phục vụ trao đổi t
 - Lưu ở trạng thái Draft hoặc Publish công khai
 - Xem danh sách bài viết (phân trang)
 - Xem chi tiết, chỉnh sửa, xóa bài viết
-- Lưu bài viết yêu thích
-- Upvote / Downvote bài viết
-- Xem ai đã tương tác và số lượt xem bài viết
+- Lưu bài viết yêu thích (new)
+- Upvote / Downvote bài viết (newnew)
+- Xem ai đã tương tác và số lượt xem bài viết (newnew)
 
 ### 3. Bình luận
 - Bình luận bài viết (sau khi đăng nhập)
@@ -43,13 +43,13 @@ Mục tiêu là xây dựng một cộng đồng nhỏ phục vụ trao đổi t
 - Tìm kiếm bài viết theo tiêu đề hoặc nội dung
 
 ### 5. Trang cá nhân
-- Hiển thị và cập nhật thông tin cá nhân
+- Hiển thị và cập nhật thông tin cá nhân (new)
 - Danh sách bài viết đã đăng và đang Draft
 
-### 6. Chế độ lọc bài viết
+### 6. Chế độ lọc bài viết (new)
 - Lọc theo newest, unanswered, popular, top-voted
 
-### 7. Bảng xếp hạng
+### 7. Bảng xếp hạng (new)
 - Top 5 người dùng đóng góp nhiều nhất
 - Top 10 tags phổ biến nhất
 
