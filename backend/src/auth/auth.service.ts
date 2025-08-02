@@ -13,7 +13,7 @@ export class AuthService {
   async validateUser(username: string, pass: string) {
     const user = await this.usersService.findByUsername(username);
     if (user && await bcrypt.compare(pass, user.password)) {
-      const { password, ...result } = user;
+      const { password, ...result } = user; // tách password ra khỏi user, phần còn lại sẽ cho vào result 
       return result;
     }
     return null;

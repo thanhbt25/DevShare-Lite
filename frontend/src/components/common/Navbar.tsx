@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { FiPlusSquare, FiSearch, FiFileText } from "react-icons/fi";
+import { IoMdNotificationsOutline } from "react-icons/io";
 import { useState, useEffect, useRef } from "react";
 import Cookies from "js-cookie";
 import { useUser } from "@/contexts/UserContext";
 import { useRouter } from "next/router";
+import NotifcationDropdown from "./NotificationDropDown";
 
 export default function Navbar() {
   const { user, setUser } = useUser(); // Sử dụng context
@@ -79,13 +81,7 @@ export default function Navbar() {
             <Link href="/create-post" aria-label="Add Post" title="Add post">
               <FiPlusSquare size={28} className="hover:text-indigo-200" />
             </Link>
-            <Link
-              href="/draft/review"
-              aria-label="Your Posts"
-              title="Your Draft"
-            >
-              <FiFileText size={26} className="hover:text-indigo-200" />
-            </Link>
+            <NotifcationDropdown />
 
             {/* Avatar dropdown */}
             <div className="relative" ref={menuRef}>
