@@ -3,13 +3,12 @@ import { NotificationsService } from './notifications.service';
 import { JwtAuthGuard } from '../auth/jwt/jwt-auth.guard';
 
 @Controller('notifications')
-@UseGuards(JwtAuthGuard)
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}
 
-  @Get()
-  async getNotifications(@Req() req) {
-    return this.notificationsService.findByReceiver(req.user.id);
+  @Get(':userId') 
+  async getNotifications(@Param('userId') userId: string) {
+    return this.notificationsService.findByReceiver(userId);
   }
 
   @Patch(':id/read')
@@ -23,3 +22,4 @@ export class NotificationsController {
     return { success: true };
   }
 }
+
