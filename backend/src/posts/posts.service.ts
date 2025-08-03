@@ -4,11 +4,15 @@ import { Model, PipelineStage, Types } from 'mongoose';
 import { Post, PostDocument } from './schemas/post.schema';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { Notification } from 'src/notifications/schemas/notifications.schemas';
 
 @Injectable()
 export class PostsService {
   constructor(
-    @InjectModel(Post.name) private postModel: Model<PostDocument>,
+    @InjectModel(Post.name) 
+    private postModel: Model<PostDocument>,
+    @InjectModel(Notification.name)
+    private readonly notificationModel: Model<Notification>,
   ) {}
 
   async create(dto: CreatePostDto): Promise<Post> {
@@ -80,18 +84,49 @@ export class PostsService {
   }
 
   async upvote(postId: string, userId: string): Promise<Post> {
-    const post = await this.postModel.findById(postId);
+    const post = await this.postModel.findById(postId).select('authorId votedUpUsers votedDownUsers').exec();
     if (!post) throw new NotFoundException('Post not found');
 
     const userObjectId = new Types.ObjectId(userId);
-    const alreadyUpvoted = post['votedUpUsers']?.some((id: Types.ObjectId) => id.equals(userObjectId));
+    const alreadyUpvoted = post.votedUpUsers?.some((id: Types.ObjectId) => id.equals(userObjectId));
     if (alreadyUpvoted) return post;
 
-    post['votedDownUsers'] = (post['votedDownUsers'] || []).filter((id: Types.ObjectId) => !id.equals(userObjectId));
-    post['votedUpUsers'] = [...(post['votedUpUsers'] || []), userObjectId];
+    // Bỏ downvote cũ (nếu có) và thêm upvote mới
+    post.votedDownUsers = (post.votedDownUsers || []).filter((id: Types.ObjectId) => !id.equals(userObjectId));
+    post.votedUpUsers = [...(post.votedUpUsers || []), userObjectId];
 
-    post.upvotes = post['votedUpUsers'].length;
-    post.downvotes = post['votedDownUsers'].length;
+    post.upvotes = post.votedUpUsers.length;
+    post.downvotes = post.votedDownUsers.length;
+
+    const postAuthor = post.authorId?.toString();
+    if (postAuthor && postAuthor !== userId) {
+      const type = 'like_post';
+      const content = 'đã upvote bài viết của bạn.';
+
+      const existingNotification = await this.notificationModel.findOne({
+        receiverId: postAuthor,
+        postId: post._id,
+        type,
+        isRead: false,
+      });
+
+      if (existingNotification) {
+        if (!existingNotification.senderId.includes(userId)) {
+          existingNotification.senderId.push(userId);
+          existingNotification.content = content;
+          await existingNotification.save();
+        }
+      } else {
+        await this.notificationModel.create({
+          senderId: [userId],
+          receiverId: postAuthor,
+          type,
+          postId: post._id,
+          content,
+          isRead: false,
+        });
+      }
+    }
 
     return post.save();
   }

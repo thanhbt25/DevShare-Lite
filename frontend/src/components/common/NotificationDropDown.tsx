@@ -37,22 +37,22 @@ export default function NotificationDropdown() {
   const formatSenderList = (senderIds: string[]) => {
     const names = senderIds.map((id) => userMap[id] || "Unknown");
     if (names.length === 1) return names[0];
-    if (names.length === 2) return `${names[0]} và ${names[1]}`;
-    return `${names[0]}, ${names[1]} và ${names.length - 2} người khác`;
+    if (names.length === 2) return `${names[0]} and ${names[1]}`;
+    return `${names[0]}, ${names[1]} and ${names.length - 2} others`;
   };
 
   const formatContent = (n: Notification) => {
     const senderText = formatSenderList(n.senderId);
     if (n.type === "like_post") {
-      return `${senderText} đã thích bài viết của bạn.`;
+      return `${senderText} liked your post.`;
     } else if (n.type === "like_comment") {
-      return `${senderText} đã thích bình luận của bạn.`;
+      return `${senderText} liked your comment.`;
     } else if (n.type === "comment_comment") {
-      return `${senderText} đã bình luận trả lời bình luận của bạn.`;
+      return `${senderText} replied to your comment.`;
     } else if (n.type === "comment_post") {
-      return `${senderText} đã bình luận bài viết của bạn.`;
+      return `${senderText} commented on your post.`;
     }
-    return "Có thông báo mới.";
+    return "New notification.";
   };
 
   // Load real-time socket
@@ -76,7 +76,7 @@ export default function NotificationDropdown() {
             });
             setUserMap((prev) => ({ ...prev, ...newMap }));
           } catch (error) {
-            console.error("Lỗi khi load userMap mới:", error);
+            console.error("Error loading new userMap:", error);
           }
         }
       });
@@ -88,7 +88,7 @@ export default function NotificationDropdown() {
     }
   }, [user, userMap]);
 
-  // Load tất cả notifications ban đầu
+  // Load all initial notifications
   useEffect(() => {
     const fetchNotifications = async () => {
       if (!user) return;
@@ -96,19 +96,16 @@ export default function NotificationDropdown() {
         const res = await axiosInstance.get(`/notifications/${user._id}`);
         setNotifications(res.data);
 
-        // Lấy danh sách tất cả senderId duy nhất
         const allSenderIds = Array.from(
           new Set(res.data.flatMap((n: Notification) => n.senderId))
         );
 
-        // Gọi song song từng request GET /users/:id
         const userResponses = await Promise.all(
           allSenderIds.map((id) =>
             axiosInstance.get(`/users/${id}`).then((res) => res.data)
           )
         );
 
-        // Tạo map _id -> username
         const map: Record<string, string> = {};
         userResponses.forEach((u: User) => {
           map[u._id] = u.username;
@@ -116,7 +113,7 @@ export default function NotificationDropdown() {
 
         setUserMap(map);
       } catch (error) {
-        console.error("Lỗi khi load notifications:", error);
+        console.error("Error loading notifications:", error);
       }
     };
 
@@ -146,11 +143,10 @@ export default function NotificationDropdown() {
           )
         );
       } catch (error) {
-        console.error("Lỗi khi đánh dấu đã đọc:", error);
+        console.error("Error marking as read:", error);
       }
     }
     if (notification.postId) {
-      console.log();
       router.push(`/post/${notification.postId}`);
     }
     setShow(false);
@@ -164,10 +160,10 @@ export default function NotificationDropdown() {
 
       {show && (
         <div className="absolute right-0 mt-2 w-80 max-h-96 overflow-y-auto bg-white text-black rounded shadow z-20">
-          <div className="p-4 font-semibold border-b">Thông báo</div>
+          <div className="p-4 font-semibold border-b">Notifications</div>
           {notifications.length === 0 ? (
             <div className="p-4 text-sm text-gray-600">
-              Không có thông báo mới
+              No new notifications
             </div>
           ) : (
             notifications.map((n) => (
@@ -185,9 +181,6 @@ export default function NotificationDropdown() {
               </div>
             ))
           )}
-          <div className="p-2 text-center text-indigo-500 hover:underline">
-            <Link href="/notification">Xem tất cả</Link>
-          </div>
         </div>
       )}
     </div>

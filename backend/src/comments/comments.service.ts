@@ -4,7 +4,6 @@ import { Model, Types } from 'mongoose';
 import { Comment, CommentDocument } from './schemas/comment.schema';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
-import { NotificationsService } from 'src/notifications/notifications.service';
 import { Post,  PostDocument } from 'src/posts/schemas/post.schema';
 import { Notification } from 'src/notifications/schemas/notifications.schemas';
 
@@ -83,7 +82,7 @@ export class CommentsService {
     return this.commentModel.findByIdAndDelete(id).exec();
   }
 
-  async voteComment(commentId: string, userId: string, isUpvote: boolean): Promise<{ message: string }> {
+    async voteComment(commentId: string, userId: string, isUpvote: boolean): Promise<{ message: string }> {
     const comment = await this.commentModel.findById(commentId);
     if (!comment) throw new NotFoundException('Comment not found');
 
@@ -92,6 +91,35 @@ export class CommentsService {
 
     if (isUpvote) {
       if (index === -1) comment.likedBy.push(userObjectId);
+
+      // Gửi thông báo nếu không phải tự like bình luận của mình
+      if (comment.authorId.toString() !== userId) {
+        const existingNotification = await this.notificationModel.findOne({
+          receiverId: comment.authorId.toString(),
+          type: 'like_comment',
+          postId: comment.postId.toString(),
+          isRead: false,
+        });
+
+        if (existingNotification) {
+          if (!existingNotification.senderId.includes(userId)) {
+            existingNotification.senderId.push(userId);
+            existingNotification.content = 'Someone liked your comment';
+            await existingNotification.save();
+          }
+        } else {
+          await this.notificationModel.create({
+            senderId: [userId],
+            receiverId: comment.authorId.toString(),
+            type: 'like_comment',
+            postId: comment.postId.toString(),
+            content: 'Someone liked your comment',
+            isRead: false,
+            parentId: comment.id.toString(),
+          });
+        }
+      }
+
     } else {
       if (index !== -1) comment.likedBy.splice(index, 1);
     }
@@ -100,7 +128,6 @@ export class CommentsService {
     return { message: isUpvote ? 'Upvoted' : 'Unvoted' };
   }
 
-  
   async findByPostId(postId: string): Promise<Comment[]> {
     return this.commentModel
       .find({ postId })
