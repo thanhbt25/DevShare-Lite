@@ -13,11 +13,12 @@ type Notification = {
   _id: string;
   senderId: string[];
   receiverId: string;
-  type: "like" | "comment";
+  type: "like_comment" | "comment_comment" | "like_post" | "like_comment";
   postId?: string;
   content: string;
   isRead: boolean;
   createdAt: string;
+  parentId?: string | null;
 };
 
 type User = {
@@ -42,8 +43,16 @@ export default function NotificationDropdown() {
 
   const formatContent = (n: Notification) => {
     const senderText = formatSenderList(n.senderId);
-    const action = n.type === "like" ? "đã thích" : "đã bình luận";
-    return `${senderText} ${action} bài viết của bạn.`;
+    if (n.type === "like_post") {
+      return `${senderText} đã thích bài viết của bạn.`;
+    } else if (n.type === "like_comment") {
+      return `${senderText} đã thích bình luận của bạn.`;
+    } else if (n.type === "comment_comment") {
+      return `${senderText} đã bình luận trả lời bình luận của bạn.`;
+    } else if (n.type === "comment_post") {
+      return `${senderText} đã bình luận bài viết của bạn.`;
+    }
+    return "Có thông báo mới.";
   };
 
   // Load real-time socket
@@ -141,7 +150,7 @@ export default function NotificationDropdown() {
       }
     }
     if (notification.postId) {
-      console.log()
+      console.log();
       router.push(`/post/${notification.postId}`);
     }
     setShow(false);

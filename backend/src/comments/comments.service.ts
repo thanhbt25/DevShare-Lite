@@ -25,29 +25,47 @@ export class CommentsService {
     const post = await this.postModel.findById(dto.postId).select('authorId').exec();
     const postAuthor = post?.authorId?.toString();
 
+    // Nếu là comment vào comment thì phải lấy author của comment cha
+    let receiverId = postAuthor;
+    let notificationType = 'comment_post';
+    let content = 'New comment on your post: ' + savedComment.content;
+
+    if (dto.parentId) {
+      const parentComment = await this.commentModel.findById(dto.parentId).exec();
+      if (parentComment && parentComment.authorId.toString() !== dto.authorId) {
+        receiverId = parentComment.authorId.toString();
+        notificationType = 'comment_comment';
+        content = 'New reply to your comment';
+      } else {
+        // Không gửi notification nếu user tự trả lời comment của mình
+        return savedComment;
+      }
+    }
+
+    // Gộp nếu đã có notification cùng loại chưa đọc
     const existingNotification = await this.notificationModel.findOne({
-      receiverId: postAuthor,
-      type: 'comment',
+      receiverId,
+      type: notificationType,
       postId: dto.postId,
-      isRead: false, // chi gop neu thong bao cu chua duoc doc
+      isRead: false,
     });
 
     if (existingNotification) {
       if (!existingNotification.senderId.includes(dto.authorId)) {
         existingNotification.senderId.push(dto.authorId);
-        existingNotification.content = 'New comment on your post';
+        existingNotification.content = content;
         await existingNotification.save();
       }
     } else {
-      // Nếu chưa có thì tạo mới 
-      const newNotificaton = await this.notificationModel.create( {
+      await this.notificationModel.create({
         senderId: [dto.authorId],
-        receiverId: postAuthor,
-        type: 'comment',
+        receiverId,
+        type: notificationType,
         postId: dto.postId,
-        content: 'New comment on you post: ' + savedComment.content,
+        content,
         isRead: false,
-      })
+        parentId: dto.parentId,
+      });
     }
 
     return savedComment;
