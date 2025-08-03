@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import axiosInstance from "@/utils/api";
 import Sidebar from "@/components/common/Sidebar";
-import UserProfile from "@/components/user/UserProfile";
+import UserProfile from "@/components/users/UserProfile";
 
 type Badge = {
   type: "gold" | "silver" | "bronze";

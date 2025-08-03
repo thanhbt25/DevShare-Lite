@@ -14,7 +14,12 @@ export class UsersService {
   }
 
   async findAll(): Promise<User[]> {
-    return this.userModel.find().exec();
+    const users = await this.userModel.find().lean();
+
+    return users.map((user: any) => ({
+      ...user,
+      id: user._id?.toString(),
+    }));
   }
   async findById(id: string): Promise<User | null> {
     return this.userModel.findById(id).lean();

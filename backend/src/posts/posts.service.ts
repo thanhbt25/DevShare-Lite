@@ -354,11 +354,46 @@ export class PostsService {
     return results.map((r) => r.tag);
   }
 
-    async findLatestPosts(limit = 5) {
+  async findLatestPosts(limit = 5) {
     return this.postModel
       .find({ isPublished: true })
       .sort({ createdAt: -1 })
       .limit(limit)
       .select("title _id");
+  }
+
+  async getTopTagsByUser(userId: string, limit = 3) {
+    try {
+      const results = await this.postModel.aggregate([
+        {
+          $match: {
+            authorId: userId,
+            isPublished: true,
+            tags: { $exists: true, $ne: [] },
+          },
+        },
+        { $unwind: "$tags" },
+        {
+          $group: {
+            _id: "$tags",
+            count: { $sum: 1 },
+          },
+        },
+        { $sort: { count: -1 } },
+        { $limit: limit },
+        {
+          $project: {
+            _id: 0,
+            name: "$_id", // tên tag
+            count: 1,     // số lần xuất hiện
+          },
+        },
+      ]);
+
+      return results;
+    } catch (error) {
+      console.error("Error in getTopTagsByUser:", error);
+      return [];
+    }
   }
 }

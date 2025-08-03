@@ -7,6 +7,11 @@ import { UpdatePostDto } from './dto/update-post.dto';
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
+  @Get('top-tags/:userId')
+  getTopTagsForUser(@Param('userId') userId: string) {
+    return this.postsService.getTopTagsByUser(userId);
+  }
+
   @Get('/search')
   async searchPosts(@Query('q') query: string) {
     return this.postsService.searchPosts(query);
