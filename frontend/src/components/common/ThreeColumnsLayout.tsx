@@ -1,7 +1,4 @@
-// components/ThreeColumnLayout.tsx
-import Navbar from "@/components/common/Navbar";
 import Sidebar from "@/components/common/Sidebar";
-import Footer from "@/components/common/Footer";
 
 interface Props {
   children: React.ReactNode;
@@ -11,7 +8,6 @@ interface Props {
 export default function ThreeColumnLayout({ children, rightSidebar }: Props) {
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar />
 
       <main className="flex flex-1">
         {/* Left Sidebar */}
@@ -26,7 +22,6 @@ export default function ThreeColumnLayout({ children, rightSidebar }: Props) {
         <aside className="w-1/5 border-l p-4 bg-white">{rightSidebar}</aside>
       </main>
 
-      <Footer />
     </div>
   );
 }

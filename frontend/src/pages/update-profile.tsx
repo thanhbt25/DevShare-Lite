@@ -5,9 +5,7 @@ import { useRouter } from "next/router";
 import API from "@/utils/api";
 import { useUser } from "@/contexts/UserContext";
 import Cookies from "js-cookie";
-import Navbar from "@/components/common/Navbar";
 import Sidebar from "@/components/common/Sidebar";
-import Footer from "@/components/common/Footer";
 import "@/styles/globals.css";
 
 import UpdateProfileForm from "@/components/update-profile/UpdateProfileForm";
@@ -140,7 +138,6 @@ export default function UpdateProfilePage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar />
       <div className="flex flex-1 bg-white">
         <div className="w-[250px]">
           <Sidebar />
@@ -158,7 +155,6 @@ export default function UpdateProfilePage() {
           />
         </main>
       </div>
-      <Footer />
     </div>
   );
 }

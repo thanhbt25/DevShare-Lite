@@ -2,8 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import Navbar from "@/components/common/Navbar";
-import Footer from "@/components/common/Footer";
 import PostForm, { PostFormValues } from "@/components/create-post/PostForm";
 import "@/styles/globals.css";
 import axiosInstance from "@/utils/api";
@@ -95,7 +93,6 @@ const CreatePostPage = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar />
 
       <div className="bg-white py-4 px-6">
         <h1 className="text-2xl font-semibold text-gray-800">
@@ -181,7 +178,6 @@ const CreatePostPage = () => {
         </aside>
       </main>
 
-      <Footer />
     </div>
   );
 };
