@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import * as dotenv from 'dotenv';
+import { IoAdapter } from '@nestjs/platform-socket.io';
 
 
 async function bootstrap() {
@@ -15,5 +16,8 @@ async function bootstrap() {
   });
 
   await app.listen(process.env.PORT ?? 5000);
+
+  const  ioServer = new IoAdapter(app);
+  app.useWebSocketAdapter(ioServer);
 }
 bootstrap();

@@ -8,7 +8,8 @@ import { Server, Socket } from 'socket.io';
 
 @WebSocketGateway({
   cors: {
-    origin: '*',  // ⚠️ Chỉnh lại nếu bạn có domain cụ thể
+    origin: 'http://localhost:3000',
+    credentials: true, 
   },
 })
 export class NotificationsGateway implements OnGatewayConnection, OnGatewayDisconnect {

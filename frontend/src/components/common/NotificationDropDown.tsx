@@ -24,7 +24,7 @@ export default function NotificationDropdown() {
   // Load real-time socket
   useEffect(() => {
     if (user) {
-      const token =  localStorage.getItem("access_token") || Cookies.get("access_token");
+      const token = Cookies.get("access_token");
       const socket = connectSocket(token!); 
 
       socket.on("notification", (data: Notification) => {
