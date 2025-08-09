@@ -15,7 +15,7 @@ export default function Sidebar() {
         href="/your-post/review"
         className="flex items-center gap-2 px-3 py-2 rounded hover:bg-indigo-100 font-medium text-indigo-700"
       >
-        <FiHelpCircle /> Your Questions
+        <FiHelpCircle /> Your Posts
       </Link>
       <Link
         href="/draft/review"
